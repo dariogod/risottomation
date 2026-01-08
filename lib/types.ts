@@ -31,6 +31,7 @@ export interface Protein {
 }
 
 export interface Order {
+  name?: string;
   mealType?: "grown-ups" | "kids";
   spritz?: SpritzOption;
   base?: RisottoBase;

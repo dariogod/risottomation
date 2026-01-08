@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const NODE_WIDTH = 300;
 const MIN_NODE_HEIGHT = 90;
 
-type NodeType = "trigger" | "condition" | "action" | "spritz" | "base" | "veggies" | "proteins" | "kids" | "submit";
+type NodeType = "trigger" | "condition" | "action" | "spritz" | "base" | "veggies" | "proteins" | "kids" | "name" | "submit";
 
 type ContainerProps = {
   children: ReactNode;
@@ -50,6 +50,9 @@ function Container({
     if (nodeType === "kids") {
       return isActive || isCompleted ? "border-green-600" : "border-[#e5e5e5]";
     }
+    if (nodeType === "name") {
+      return isActive || isCompleted ? "border-purple-600" : "border-[#e5e5e5]";
+    }
     if (nodeType === "submit") {
       return isActive || isCompleted ? "border-[#0066cc]" : "border-[#e5e5e5]";
     }
@@ -65,6 +68,7 @@ function Container({
       if (nodeType === "veggies") return "border-green-600/40";
       if (nodeType === "proteins") return "border-orange-600/40";
       if (nodeType === "kids") return "border-green-600/40";
+      if (nodeType === "name") return "border-purple-600/40";
       if (nodeType === "submit") return "border-[#0066cc]/40";
       return "border-[#0066cc]/40";
     }

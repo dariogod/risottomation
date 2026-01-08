@@ -53,7 +53,7 @@ export default function ConfirmationPage() {
             Order Confirmed!
           </h1>
           <p className="text-xl text-[#333333]">
-            Thank you for your order. We'll prepare it right away.
+            Thank you{order.name ? `, ${order.name}` : ""}! We'll prepare your order right away.
           </p>
         </div>
 
@@ -63,6 +63,15 @@ export default function ConfirmationPage() {
           </h2>
 
           <div className="space-y-6">
+            {order.name && (
+              <div className="border-b border-[#e5e5e5] pb-4">
+                <h3 className="text-sm font-medium text-[#999999] mb-1">
+                  Name
+                </h3>
+                <p className="text-lg text-[#1a1a1a]">{order.name}</p>
+              </div>
+            )}
+
             {order.mealType && (
               <div className="border-b border-[#e5e5e5] pb-4">
                 <h3 className="text-sm font-medium text-[#999999] mb-1">
@@ -77,7 +86,7 @@ export default function ConfirmationPage() {
                 <h3 className="text-sm font-medium text-[#999999] mb-1">
                   Kid's Meal
                 </h3>
-                <p className="text-lg text-[#1a1a1a]">Frikandel with andalouse</p>
+                <p className="text-lg text-[#1a1a1a]">Risotto with frikandel & andalouse</p>
                 <p className="text-sm text-green-600 mt-1">🎁 Free toy included!</p>
               </div>
             )}

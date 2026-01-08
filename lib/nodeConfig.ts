@@ -11,6 +11,7 @@ export const nodeHeights: Record<string, number> = {
   veggies: 130,
   proteins: 130,
   kids: 100,
+  name: 100,
   submit: 115,
 };
 

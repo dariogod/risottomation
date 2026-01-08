@@ -14,7 +14,7 @@ import {
   Position,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Zap, GitBranch, Wine, ChefHat, Carrot, Beef, Baby, ShoppingCart } from "lucide-react";
+import { Zap, GitBranch, Wine, ChefHat, Carrot, Beef, Baby, ShoppingCart, User } from "lucide-react";
 import OrderNode, { type NodeType } from "./OrderNode";
 import type { Order, SpritzOption, RisottoBase, Veggie, Protein } from "@/lib/types";
 import { spritzes, risottoBases, veggies, proteins } from "@/lib/data";
@@ -23,7 +23,7 @@ import { nodeHeights, NODE_GAP } from "@/lib/nodeConfig";
 const NODE_WIDTH = 300;
 
 interface OrderNodeData extends Record<string, unknown> {
-  type: "trigger" | "condition" | "spritz" | "base" | "veggies" | "proteins" | "kids" | "submit";
+  type: "trigger" | "condition" | "spritz" | "base" | "veggies" | "proteins" | "kids" | "name" | "submit";
   order: Order;
   onMealTypeSelect?: (type: "grown-ups" | "kids") => void;
   onSpritzSelect?: (spritz: SpritzOption) => void;
@@ -31,6 +31,7 @@ interface OrderNodeData extends Record<string, unknown> {
   onVeggieToggle?: (veggie: Veggie) => void;
   onProteinToggle?: (protein: Protein) => void;
   onKidsMealSelect?: (selected: boolean) => void;
+  onNameChange?: (name: string) => void;
   onSubmitOrder?: () => void;
   canOrder?: boolean;
 }
@@ -257,7 +258,7 @@ function KidsNodeContent({
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Frikandel with andalouse</span>
+          <span className="text-sm font-medium">Risotto with frikandel & andalouse</span>
           {order.kidsMeal && (
             <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -265,6 +266,26 @@ function KidsNodeContent({
           )}
         </div>
       </button>
+    </div>
+  );
+}
+
+function NameNodeContent({
+  order,
+  onNameChange,
+}: {
+  order: Order;
+  onNameChange: (name: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <input
+        type="text"
+        value={order.name || ""}
+        onChange={(e) => onNameChange(e.target.value)}
+        placeholder="Enter your name"
+        className="w-full px-3 py-2 rounded-sm border border-[#e5e5e5] text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
+      />
     </div>
   );
 }
@@ -308,6 +329,7 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
     (data.type === "veggies" && data.order.veggies.length > 0) ||
     (data.type === "proteins" && data.order.proteins.length > 0) ||
     (data.type === "kids" && !!data.order.kidsMeal) ||
+    (data.type === "name" && !!data.order.name?.trim()) ||
     (data.type === "submit" && false); // Submit never shows as completed
 
   const isActive =
@@ -318,6 +340,7 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
     (data.type === "veggies" && data.order.mealType === "grown-ups" && !!data.order.base && data.order.veggies.length === 0) ||
     (data.type === "proteins" && data.order.mealType === "grown-ups" && !!data.order.base && data.order.veggies.length > 0 && data.order.proteins.length === 0) ||
     (data.type === "kids" && data.order.mealType === "kids" && !data.order.kidsMeal) ||
+    (data.type === "name" && !data.order.name?.trim()) ||
     (data.type === "submit" && !!data.canOrder);
 
   const getIcon = () => {
@@ -336,6 +359,8 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
         return <Beef size={15} className="text-orange-600" />;
       case "kids":
         return <Baby size={15} className="text-green-600" />;
+      case "name":
+        return <User size={15} className="text-purple-600" />;
       case "submit":
         return <ShoppingCart size={15} className="text-[#0066cc]" />;
     }
@@ -357,6 +382,8 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
         return "Choose your proteins";
       case "kids":
         return "Kid's meal";
+      case "name":
+        return "Your name";
       case "submit":
         return "Place your order";
     }
@@ -378,6 +405,8 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
         return <ProteinsNodeContent order={data.order} onProteinToggle={data.onProteinToggle!} />;
       case "kids":
         return <KidsNodeContent order={data.order} onKidsMealSelect={data.onKidsMealSelect!} />;
+      case "name":
+        return <NameNodeContent order={data.order} onNameChange={data.onNameChange!} />;
       case "submit":
         return <SubmitNodeContent canOrder={!!data.canOrder} onSubmitOrder={data.onSubmitOrder!} />;
     }
@@ -510,6 +539,10 @@ export default function OrderFlow() {
     setOrder((prev) => ({ ...prev, kidsMeal: selected }));
   }, []);
 
+  const handleNameChange = useCallback((name: string) => {
+    setOrder((prev) => ({ ...prev, name }));
+  }, []);
+
   const handleOrder = useCallback(() => {
     const orderData = JSON.stringify(order);
     sessionStorage.setItem("order", orderData);
@@ -533,11 +566,18 @@ export default function OrderFlow() {
         return order.mealType === "grown-ups" && order.veggies.length > 0;
       case "kids":
         return order.mealType === "kids";
-      case "submit":
+      case "name":
         if (order.mealType === "grown-ups") {
           return order.proteins.length > 0;
         } else if (order.mealType === "kids") {
           return !!order.kidsMeal;
+        }
+        return false;
+      case "submit":
+        if (order.mealType === "grown-ups") {
+          return order.proteins.length > 0 && !!order.name?.trim();
+        } else if (order.mealType === "kids") {
+          return !!order.kidsMeal && !!order.name?.trim();
         }
         return false;
       default:
@@ -561,9 +601,11 @@ export default function OrderFlow() {
       if (shouldShowNode("base")) nodeOrder.push("base");
       if (shouldShowNode("veggies")) nodeOrder.push("veggies");
       if (shouldShowNode("proteins")) nodeOrder.push("proteins");
+      if (shouldShowNode("name")) nodeOrder.push("name");
       if (shouldShowNode("submit")) nodeOrder.push("submit");
     } else if (order.mealType === "kids") {
       if (shouldShowNode("kids")) nodeOrder.push("kids");
+      if (shouldShowNode("name")) nodeOrder.push("name");
       if (shouldShowNode("submit")) nodeOrder.push("submit");
     }
 
@@ -588,6 +630,7 @@ export default function OrderFlow() {
       onVeggieToggle: handleVeggieToggle,
       onProteinToggle: handleProteinToggle,
       onKidsMealSelect: handleKidsMealSelect,
+      onNameChange: handleNameChange,
     };
 
     // Trigger - always shown
@@ -666,6 +709,18 @@ export default function OrderFlow() {
         });
       }
 
+      if (shouldShowNode("name")) {
+        nodes.push({
+          id: "name",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.name ?? 0 },
+          data: {
+            type: "name",
+            ...baseNodeData,
+          },
+        });
+      }
+
       if (shouldShowNode("submit")) {
         nodes.push({
           id: "submit",
@@ -674,7 +729,7 @@ export default function OrderFlow() {
           data: {
             type: "submit",
             order,
-            canOrder: !!order.spritz && !!order.base && order.veggies.length > 0 && order.proteins.length > 0,
+            canOrder: !!order.spritz && !!order.base && order.veggies.length > 0 && order.proteins.length > 0 && !!order.name?.trim(),
             onSubmitOrder: handleOrder,
           },
         });
@@ -694,6 +749,18 @@ export default function OrderFlow() {
         });
       }
 
+      if (shouldShowNode("name")) {
+        nodes.push({
+          id: "name",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.name ?? 0 },
+          data: {
+            type: "name",
+            ...baseNodeData,
+          },
+        });
+      }
+
       if (shouldShowNode("submit")) {
         nodes.push({
           id: "submit",
@@ -702,7 +769,7 @@ export default function OrderFlow() {
           data: {
             type: "submit",
             order,
-            canOrder: true,
+            canOrder: !!order.name?.trim(),
             onSubmitOrder: handleOrder,
           },
         });
@@ -710,7 +777,7 @@ export default function OrderFlow() {
     }
 
     return nodes;
-  }, [order, handleMealTypeSelect, handleSpritzSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, handleOrder, nodePositions, shouldShowNode]);
+  }, [order, handleMealTypeSelect, handleSpritzSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, handleNameChange, handleOrder, nodePositions, shouldShowNode]);
 
   const initialEdges: Edge[] = useMemo(() => {
     const edges: Edge[] = [];
@@ -733,15 +800,21 @@ export default function OrderFlow() {
       if (shouldShowNode("veggies") && shouldShowNode("proteins")) {
         edges.push({ id: "e-veggies-proteins", source: "veggies", target: "proteins", type: "smoothstep" });
       }
-      if (shouldShowNode("proteins") && shouldShowNode("submit")) {
-        edges.push({ id: "e-proteins-submit", source: "proteins", target: "submit", type: "smoothstep" });
+      if (shouldShowNode("proteins") && shouldShowNode("name")) {
+        edges.push({ id: "e-proteins-name", source: "proteins", target: "name", type: "smoothstep" });
+      }
+      if (shouldShowNode("name") && shouldShowNode("submit")) {
+        edges.push({ id: "e-name-submit", source: "name", target: "submit", type: "smoothstep" });
       }
     } else if (order.mealType === "kids") {
       if (shouldShowNode("condition") && shouldShowNode("kids")) {
         edges.push({ id: "e-condition-kids", source: "condition", target: "kids", type: "smoothstep" });
       }
-      if (shouldShowNode("kids") && shouldShowNode("submit")) {
-        edges.push({ id: "e-kids-submit", source: "kids", target: "submit", type: "smoothstep" });
+      if (shouldShowNode("kids") && shouldShowNode("name")) {
+        edges.push({ id: "e-kids-name", source: "kids", target: "name", type: "smoothstep" });
+      }
+      if (shouldShowNode("name") && shouldShowNode("submit")) {
+        edges.push({ id: "e-name-submit", source: "name", target: "submit", type: "smoothstep" });
       }
     }
 
@@ -770,6 +843,7 @@ export default function OrderFlow() {
       onVeggieToggle: handleVeggieToggle,
       onProteinToggle: handleProteinToggle,
       onKidsMealSelect: handleKidsMealSelect,
+      onNameChange: handleNameChange,
     };
 
     const newNodes: Node<OrderNodeData>[] = [];
@@ -850,6 +924,18 @@ export default function OrderFlow() {
         });
       }
 
+      if (shouldShowNode("name")) {
+        newNodes.push({
+          id: "name",
+          type: "orderNode",
+          position: { x: 0, y: positions.name ?? 0 },
+          data: {
+            type: "name",
+            ...baseNodeData,
+          },
+        });
+      }
+
       if (shouldShowNode("submit")) {
         newNodes.push({
           id: "submit",
@@ -858,7 +944,7 @@ export default function OrderFlow() {
           data: {
             type: "submit",
             order,
-            canOrder: !!order.spritz && !!order.base && order.veggies.length > 0 && order.proteins.length > 0,
+            canOrder: !!order.spritz && !!order.base && order.veggies.length > 0 && order.proteins.length > 0 && !!order.name?.trim(),
             onSubmitOrder: handleOrder,
           },
         });
@@ -878,6 +964,18 @@ export default function OrderFlow() {
         });
       }
 
+      if (shouldShowNode("name")) {
+        newNodes.push({
+          id: "name",
+          type: "orderNode",
+          position: { x: 0, y: positions.name ?? 0 },
+          data: {
+            type: "name",
+            ...baseNodeData,
+          },
+        });
+      }
+
       if (shouldShowNode("submit")) {
         newNodes.push({
           id: "submit",
@@ -886,7 +984,7 @@ export default function OrderFlow() {
           data: {
             type: "submit",
             order,
-            canOrder: true,
+            canOrder: !!order.name?.trim(),
             onSubmitOrder: handleOrder,
           },
         });
@@ -894,7 +992,7 @@ export default function OrderFlow() {
     }
 
     setNodes(newNodes);
-  }, [order, setNodes, calculateNodePositions, shouldShowNode, handleMealTypeSelect, handleSpritzSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, handleOrder]);
+  }, [order, setNodes, calculateNodePositions, shouldShowNode, handleMealTypeSelect, handleSpritzSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, handleNameChange, handleOrder]);
 
   // Update edges when order changes - only create edges for nodes that exist
   React.useEffect(() => {
@@ -918,15 +1016,21 @@ export default function OrderFlow() {
       if (shouldShowNode("veggies") && shouldShowNode("proteins")) {
         newEdges.push({ id: "e-veggies-proteins", source: "veggies", target: "proteins", type: "smoothstep" });
       }
-      if (shouldShowNode("proteins") && shouldShowNode("submit")) {
-        newEdges.push({ id: "e-proteins-submit", source: "proteins", target: "submit", type: "smoothstep" });
+      if (shouldShowNode("proteins") && shouldShowNode("name")) {
+        newEdges.push({ id: "e-proteins-name", source: "proteins", target: "name", type: "smoothstep" });
+      }
+      if (shouldShowNode("name") && shouldShowNode("submit")) {
+        newEdges.push({ id: "e-name-submit", source: "name", target: "submit", type: "smoothstep" });
       }
     } else if (order.mealType === "kids") {
       if (shouldShowNode("condition") && shouldShowNode("kids")) {
         newEdges.push({ id: "e-condition-kids", source: "condition", target: "kids", type: "smoothstep" });
       }
-      if (shouldShowNode("kids") && shouldShowNode("submit")) {
-        newEdges.push({ id: "e-kids-submit", source: "kids", target: "submit", type: "smoothstep" });
+      if (shouldShowNode("kids") && shouldShowNode("name")) {
+        newEdges.push({ id: "e-kids-name", source: "kids", target: "name", type: "smoothstep" });
+      }
+      if (shouldShowNode("name") && shouldShowNode("submit")) {
+        newEdges.push({ id: "e-name-submit", source: "name", target: "submit", type: "smoothstep" });
       }
     }
 
