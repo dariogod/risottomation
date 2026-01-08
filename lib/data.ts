@@ -37,6 +37,11 @@ export const spritzes: SpritzOption[] = [
     name: "Hugo Spritz",
     description: "Elderflower syrup, prosecco, mint, and lime",
   },
+  {
+    id: "no-spritz",
+    name: "No spritz",
+    description: "No spritz",
+  },
 ];
 
 export const risottoBases: RisottoBase[] = [
