@@ -14,33 +14,33 @@ export default function Hero() {
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#FF9800]/20 rounded-full blur-3xl" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl" />
       
-      <div className="relative z-10 max-w-4xl mx-auto text-center fade-in-up">
+      <div className="relative z-10 w-full px-4 text-center fade-in-up">
         {/* Title */}
-        <h1 className="text-6xl md:text-8xl font-bold text-[#4d0629] mb-3 leading-tight tracking-tight">
+        <h1 className="text-[clamp(2.5rem,12vw,6rem)] font-bold text-[#4d0629] mb-3 leading-tight tracking-tight px-2">
           Risottomation
         </h1>
         
         {/* Slogan */}
-        <p className="text-2xl md:text-3xl font-medium text-[#4d0629] mb-12">
+        <p className="text-xl md:text-2xl lg:text-3xl font-medium text-[#4d0629] mb-8 md:mb-12 px-2">
           Fast food, but good.
         </p>
         
         {/* Risotto bowl image */}
-        <div className="relative mx-auto float">
-          <div className="relative w-80 h-80 md:w-96 md:h-96 mx-auto">
+        <div className="relative w-full float -mx-4 md:mx-auto md:w-auto">
+          <div className="relative w-full aspect-square md:w-96 md:h-96 md:mx-auto">
             <Image
               src="/risotto-bowl-2.png"
               alt="Delicious risotto bowl with pumpkin, mushrooms, chorizo, and seeds"
               fill
               className="object-contain drop-shadow-2xl"
               priority
-              sizes="(max-width: 768px) 320px, 384px"
+              sizes="100vw"
             />
           </div>
           
           {/* Decorative elements around bowl */}
-          <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/40 rounded-full blur-sm" />
-          <div className="absolute -bottom-2 -left-6 w-20 h-20 bg-white/30 rounded-full blur-sm" />
+          <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/40 rounded-full blur-sm hidden md:block" />
+          <div className="absolute -bottom-2 -left-6 w-20 h-20 bg-white/30 rounded-full blur-sm hidden md:block" />
         </div>
       </div>
       

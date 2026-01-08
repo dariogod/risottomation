@@ -2,22 +2,25 @@ import { Dish, SpritzOption, RisottoBase, Veggie, Protein } from "./types";
 
 export const favorites: Dish[] = [
   {
-    id: "wouter-special",
-    name: "The Wouter Special",
-    description: "Truffle risotto with extra parmesan, crispy pancetta, a touch of chaos, and 'just one more quick fix' before serving",
-    allergens: ["Lactose", "Gluten", "Perfectionism"],
+    id: "founder-special",
+    name: "The Founder Special",
+    description: "A normal Risotto intelligence layer with extra parmesan, crispy Guanciale, pumpkin and a lot of grinding & hustling (pepper & salt). Eat it like there is no tomorrow.",
+    allergens: ["Lactose", "Gluten"],
+    image: "/founders.png",
   },
   {
-    id: "sprint-risotto",
-    name: "The Sprint Risotto",
-    description: "Fast-paced mushroom medley delivered in exactly two weeks. Contains wild mushrooms, agile methodology, and zero scope creep",
-    allergens: ["Gluten", "Deadlines"],
+    id: "pitpat-risotto",
+    name: "The Pitpat Risotto",
+    description: "Dual-flavored contrast plate delivered with perfect balance. Contains earthy leek & truffle on one side, vibrant pumpkin & chorizo on the other, and zero middle ground.",
+    allergens: ["Gluten"],
+    image: "/pitpat.png",
   },
   {
-    id: "debugging-delight",
-    name: "The Debugging Delight",
-    description: "Comfort food for late-night coding sessions. Creamy arborio with console.log(cheese) and a stack trace of herbs",
-    allergens: ["Lactose", "Gluten", "Caffeine"],
+    id: "gtm-shire",
+    name: "The GTM Shire",
+    description: "Comfort-driven sales classic straight from the GTM Shire. Built on a classic broth with earthy oyster mushrooms, sweet pumpkin, and crispy guanciale. Closing food deals has never looked this good.",
+    allergens: ["Gluten"],
+    image: "/sales.png",
   },
 ];
 
