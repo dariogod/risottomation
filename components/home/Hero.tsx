@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Button from "@/components/Button";
 
 export default function Hero() {
   return (
@@ -52,21 +51,6 @@ export default function Hero() {
           {/* Decorative elements around bowl */}
           <div className="absolute -top-4 -right-4 w-12 h-12 bg-[#ff6b4a]/20 rounded-full blur-sm" />
           <div className="absolute -bottom-2 -left-6 w-16 h-16 bg-[#3366ff]/20 rounded-full blur-sm" />
-        </div>
-        
-        {/* CTA Button */}
-        <Button href="/order" variant="coral" className="text-lg px-8 py-4">
-          Order online
-        </Button>
-        
-        {/* Secondary link */}
-        <div className="mt-6">
-          <a 
-            href="#favorites" 
-            className="text-white/60 hover:text-white text-sm underline underline-offset-4 transition-colors"
-          >
-            Or check our menu
-          </a>
         </div>
       </div>
       

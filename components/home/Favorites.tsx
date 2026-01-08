@@ -164,10 +164,10 @@ export default function Favorites() {
           </div>
         </div>
         
-        {/* Check menu button */}
+        {/* Order online button */}
         <div className="flex justify-center mt-12">
-          <Button href="/order" variant="secondary">
-            Check our menu
+          <Button href="/order" variant="coral" className="text-lg px-8 py-4">
+            Order online
           </Button>
         </div>
       </div>
