@@ -2,25 +2,25 @@ import { Dish, SpritzOption, AppetizerOption, RisottoBase, Veggie, Protein } fro
 
 export const favorites: Dish[] = [
   {
-    id: "founder-special",
-    name: "The Founder Special",
-    description: "A normal Risotto intelligence layer with extra parmesan, crispy Guanciale, pumpkin and a lot of grinding & hustling (pepper & salt). Eat it like there is no tomorrow.",
-    allergens: ["Lactose", "Gluten"],
-    image: "/founders.png",
-  },
-  {
     id: "pitpat-risotto",
-    name: "The Pit-Pat",
-    description: "Dual-flavored contrast plate delivered with perfect balance. Contains earthy leek & truffle on one side, vibrant pumpkin & chorizo on the other, and zero middle ground.",
+    name: "The Pit Pat",
+    description: "An intelligent risotto layer delivering a perfect balance between earthy leek & oyster mushroom on one side, and vibrant pumpkin & guanciale on the other.",
     allergens: ["Gluten"],
     image: "/pitpat.png",
   },
   {
     id: "gtm-shire",
     name: "The Shire",
-    description: "Comfort-driven sales classic straight from the GTM Shire. Built on a classic broth with earthy oyster mushrooms, sweet pumpkin, and crispy guanciale. Closing food deals has never looked this good.",
+    description: "A Comfort-driven GTM Classic. A broth with earthy oyster mushrooms, sweet pumpkin, and crispy guanciale.",
     allergens: ["Gluten"],
     image: "/sales.png",
+  },
+  {
+    id: "founder-special",
+    name: "The Founder Special",
+    description: "A normal Risotto intelligence layer with extra parmesan, crispy Guanciale, pumpkin and a lot of grinding & hustling (pepper & salt). Eat it like there is no tomorrow.",
+    allergens: ["Lactose", "Gluten"],
+    image: "/founders.png",
   },
 ];
 
