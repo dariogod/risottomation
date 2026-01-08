@@ -1,4 +1,4 @@
-import { Dish, SpritzOption, AppetizerOption, RisottoBase, Topping, OrderStep } from "./types";
+import { Dish, RisottoBase, Veggie, Protein } from "./types";
 
 export const favorites: Dish[] = [
   {
@@ -51,154 +51,63 @@ export const favorites: Dish[] = [
   },
 ];
 
-export const spritzes: SpritzOption[] = [
-  {
-    id: "aperol",
-    name: "Aperol Spritz",
-    description: "Aperol, prosecco, and soda water",
-  },
-  {
-    id: "limoncello",
-    name: "Limoncello Spritz",
-    description: "Limoncello, prosecco, and soda water",
-  },
-  {
-    id: "hugo",
-    name: "Hugo Spritz",
-    description: "Elderflower syrup, prosecco, mint, and lime",
-  },
-];
-
-export const appetizers: AppetizerOption[] = [
-  {
-    id: "bruschetta",
-    name: "Bruschetta",
-    description: "Toasted bread with fresh tomatoes, basil, and garlic",
-  },
-  {
-    id: "caprese",
-    name: "Caprese Salad",
-    description: "Fresh mozzarella, tomatoes, and basil with balsamic",
-  },
-  {
-    id: "antipasto",
-    name: "Antipasto Platter",
-    description: "Selection of cured meats, cheeses, and olives",
-  },
-  {
-    id: "arancini",
-    name: "Arancini",
-    description: "Crispy risotto balls with mozzarella center",
-  },
-  {
-    id: "prosciutto",
-    name: "Prosciutto & Melon",
-    description: "Thinly sliced prosciutto with fresh cantaloupe",
-  },
-];
-
 export const risottoBases: RisottoBase[] = [
   {
-    id: "arborio",
-    name: "Arborio",
-    description: "Classic Italian short-grain rice",
+    id: "vegan",
+    name: "Vegan",
+    description: "Vegan risotto base",
   },
   {
-    id: "carnaroli",
-    name: "Carnaroli",
-    description: "Premium risotto rice with excellent texture",
+    id: "veggie",
+    name: "Veggie",
+    description: "Vegetarian risotto base",
   },
   {
-    id: "mushroom-base",
-    name: "Mushroom Base",
-    description: "Risotto cooked with mushroom stock",
-  },
-  {
-    id: "seafood-base",
-    name: "Seafood Base",
-    description: "Risotto cooked with seafood stock",
-  },
-  {
-    id: "vegetable-base",
-    name: "Vegetable Base",
-    description: "Risotto cooked with vegetable stock",
+    id: "vlees",
+    name: "Meat (bouillon)",
+    description: "Meat-based risotto bouillon",
   },
 ];
 
-export const toppings: Topping[] = [
+export const veggies: Veggie[] = [
   {
-    id: "parmesan",
-    name: "Parmesan",
-    description: "Freshly grated parmesan cheese",
+    id: "pompoen",
+    name: "Pumpkin",
+    description: "Pumpkin",
   },
   {
-    id: "truffle",
+    id: "oesterzwam",
+    name: "Oyster Mushroom",
+    description: "Oyster mushroom",
+  },
+  {
+    id: "prei",
+    name: "Leek",
+    description: "Leek",
+  },
+];
+
+export const proteins: Protein[] = [
+  {
+    id: "truffel",
     name: "Truffle",
-    description: "Black truffle shavings",
+    description: "Truffle",
   },
   {
-    id: "mushrooms",
-    name: "Mushrooms",
-    description: "Sautéed wild mushrooms",
+    id: "pompoenzaden",
+    name: "Pumpkin Seeds",
+    description: "Pumpkin seeds",
   },
   {
-    id: "seafood-mix",
-    name: "Seafood Mix",
-    description: "Shrimp, scallops, and mussels",
+    id: "chorizo",
+    name: "Chorizo",
+    description: "Chorizo sausage",
   },
   {
-    id: "peas",
-    name: "Peas",
-    description: "Fresh green peas",
-  },
-  {
-    id: "asparagus",
-    name: "Asparagus",
-    description: "Grilled asparagus spears",
-  },
-  {
-    id: "pancetta",
-    name: "Pancetta",
-    description: "Crispy pancetta bits",
-  },
-  {
-    id: "sun-dried-tomatoes",
-    name: "Sun-Dried Tomatoes",
-    description: "Marinated sun-dried tomatoes",
-  },
-  {
-    id: "artichokes",
-    name: "Artichokes",
-    description: "Marinated artichoke hearts",
-  },
-  {
-    id: "basil",
-    name: "Fresh Basil",
-    description: "Fresh basil leaves",
-  },
-  {
-    id: "lemon-zest",
-    name: "Lemon Zest",
-    description: "Fresh lemon zest",
-  },
-  {
-    id: "crispy-onions",
-    name: "Crispy Onions",
-    description: "Fried crispy onions",
+    id: "guanciale",
+    name: "Guanciale",
+    description: "Guanciale",
   },
 ];
 
-export const orderSteps: OrderStep[] = [
-  {
-    id: 1,
-    title: "Choose your spritz",
-  },
-  {
-    id: 2,
-    title: "Choose your appetizer",
-  },
-  {
-    id: 3,
-    title: "Compose your risotto",
-  },
-];
+

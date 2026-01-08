@@ -6,35 +6,30 @@ export interface Dish {
   image?: string;
 }
 
-export interface SpritzOption {
-  id: string;
-  name: string;
-  description?: string;
-}
-
-export interface AppetizerOption {
-  id: string;
-  name: string;
-  description?: string;
-}
-
 export interface RisottoBase {
   id: string;
   name: string;
   description?: string;
 }
 
-export interface Topping {
+export interface Veggie {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+export interface Protein {
   id: string;
   name: string;
   description?: string;
 }
 
 export interface Order {
-  spritz?: SpritzOption;
-  appetizer?: AppetizerOption;
-  risottoBase?: RisottoBase;
-  toppings: Topping[];
+  mealType?: "grown-ups" | "kids";
+  base?: RisottoBase;
+  veggies: Veggie[];
+  proteins: Protein[];
+  kidsMeal?: boolean;
 }
 
 export interface OrderStep {

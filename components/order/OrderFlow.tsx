@@ -14,219 +14,309 @@ import {
   Position,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Wine, UtensilsCrossed, ChefHat } from "lucide-react";
+import { Zap, GitBranch, ChefHat, Carrot, Beef, Baby } from "lucide-react";
 import Button from "@/components/Button";
-import OrderNode from "./OrderNode";
-import type { Order, SpritzOption, AppetizerOption, RisottoBase, Topping } from "@/lib/types";
-import { spritzes, appetizers, risottoBases, toppings } from "@/lib/data";
+import OrderNode, { type NodeType } from "./OrderNode";
+import type { Order, RisottoBase, Veggie, Protein } from "@/lib/types";
+import { risottoBases, veggies, proteins } from "@/lib/data";
+
+const NODE_WIDTH = 300;
+const NODE_SPACING = 50;
 
 interface OrderNodeData extends Record<string, unknown> {
-  type: "spritz" | "appetizer" | "risotto";
+  type: "trigger" | "condition" | "base" | "veggies" | "proteins" | "kids";
   order: Order;
-  onSpritzSelect: (spritz: SpritzOption) => void;
-  onAppetizerSelect: (appetizer: AppetizerOption) => void;
-  onBaseSelect: (base: RisottoBase) => void;
-  onToppingToggle: (topping: Topping) => void;
+  onMealTypeSelect?: (type: "grown-ups" | "kids") => void;
+  onBaseSelect?: (base: RisottoBase) => void;
+  onVeggieToggle?: (veggie: Veggie) => void;
+  onProteinToggle?: (protein: Protein) => void;
+  onKidsMealSelect?: (selected: boolean) => void;
 }
 
-function SpritzNodeContent({ order, onSpritzSelect }: { order: Order; onSpritzSelect: (spritz: SpritzOption) => void }) {
+function TriggerNodeContent() {
   return (
-    <div className="space-y-2">
-      {spritzes.map((spritz) => {
-        const isSelected = order.spritz?.id === spritz.id;
-        return (
-          <button
-            key={spritz.id}
-            type="button"
-            onClick={() => onSpritzSelect(spritz)}
-            className={`w-full text-left p-2 rounded-sm border transition-all ${
-              isSelected
-                ? "border-[#0066cc] bg-[#f0f7ff]"
-                : "border-[#e5e5e5] hover:border-[#0066cc]"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{spritz.name}</span>
-              {isSelected && (
-                <svg className="w-4 h-4 text-[#0066cc]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-            </div>
-          </button>
-        );
-      })}
+    <div className="rounded-sm space-y-1 bg-neutral-100 px-2 py-1 text-black">
+      <div className="flex items-center gap-2">
+        <span className="text-xs">Create your bowl</span>
+      </div>
     </div>
   );
 }
 
-function AppetizerNodeContent({
+function ConditionNodeContent({
   order,
-  onAppetizerSelect,
+  onMealTypeSelect,
 }: {
   order: Order;
-  onAppetizerSelect: (appetizer: AppetizerOption) => void;
+  onMealTypeSelect: (type: "grown-ups" | "kids") => void;
 }) {
-  if (!order.spritz) {
-    return <p className="text-[#999999] text-xs">Complete previous step first</p>;
-  }
-
   return (
     <div className="space-y-2">
-      {appetizers.map((appetizer) => {
-        const isSelected = order.appetizer?.id === appetizer.id;
-        return (
-          <button
-            key={appetizer.id}
-            type="button"
-            onClick={() => onAppetizerSelect(appetizer)}
-            className={`w-full text-left p-2 rounded-sm border transition-all ${
-              isSelected
-                ? "border-[#0066cc] bg-[#f0f7ff]"
-                : "border-[#e5e5e5] hover:border-[#0066cc]"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{appetizer.name}</span>
-              {isSelected && (
-                <svg className="w-4 h-4 text-[#0066cc]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-            </div>
-          </button>
-        );
-      })}
+      <button
+        type="button"
+        onClick={() => onMealTypeSelect("grown-ups")}
+        className={`w-full text-left p-2 rounded-sm border transition-all ${
+          order.mealType === "grown-ups"
+            ? "border-orange-600 bg-orange-50"
+            : "border-[#e5e5e5] hover:border-orange-600"
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium">Grown-ups</span>
+          {order.mealType === "grown-ups" && (
+            <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+        </div>
+      </button>
+      <button
+        type="button"
+        onClick={() => onMealTypeSelect("kids")}
+        className={`w-full text-left p-2 rounded-sm border transition-all ${
+          order.mealType === "kids"
+            ? "border-orange-600 bg-orange-50"
+            : "border-[#e5e5e5] hover:border-orange-600"
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium">Kids</span>
+          {order.mealType === "kids" && (
+            <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+        </div>
+      </button>
     </div>
   );
 }
 
-function RisottoNodeContent({
+function BaseNodeContent({
   order,
   onBaseSelect,
-  onToppingToggle,
 }: {
   order: Order;
   onBaseSelect: (base: RisottoBase) => void;
-  onToppingToggle: (topping: Topping) => void;
 }) {
-  if (!order.appetizer) {
+  if (order.mealType !== "grown-ups") {
     return <p className="text-[#999999] text-xs">Complete previous step first</p>;
   }
 
   return (
-    <div className="space-y-4">
-      {/* Base selection */}
-      <div>
-        <p className="text-xs font-medium text-[#333333] mb-2">Base:</p>
-        <div className="space-y-1">
-          {risottoBases.map((base) => {
-            const isSelected = order.risottoBase?.id === base.id;
-            return (
-              <button
-                key={base.id}
-                type="button"
-                onClick={() => onBaseSelect(base)}
-                className={`w-full text-left p-2 rounded-sm border transition-all ${
-                  isSelected
-                    ? "border-[#0066cc] bg-[#f0f7ff]"
-                    : "border-[#e5e5e5] hover:border-[#0066cc]"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs">{base.name}</span>
-                  {isSelected && (
-                    <svg className="w-3 h-3 text-[#0066cc]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+    <div className="space-y-2">
+      {risottoBases.map((base) => {
+        const isSelected = order.base?.id === base.id;
+        return (
+          <button
+            key={base.id}
+            type="button"
+            onClick={() => onBaseSelect(base)}
+            className={`w-full text-left p-2 rounded-sm border transition-all ${
+              isSelected
+                ? "border-[#0066cc] bg-[#f0f7ff]"
+                : "border-[#e5e5e5] hover:border-[#0066cc]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">{base.name}</span>
+              {isSelected && (
+                <svg className="w-4 h-4 text-[#0066cc]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
-      {/* Toppings selection */}
-      <div>
-        <p className="text-xs font-medium text-[#333333] mb-2">Toppings:</p>
-        <div className="flex flex-wrap gap-1">
-          {toppings.map((topping) => {
-            const isSelected = order.toppings.some((t) => t.id === topping.id);
-            return (
-              <button
-                key={topping.id}
-                type="button"
-                onClick={() => onToppingToggle(topping)}
-                className={`px-2 py-1 rounded-sm border text-xs transition-all ${
-                  isSelected
-                    ? "border-[#0066cc] bg-[#f0f7ff] text-[#0066cc]"
-                    : "border-[#e5e5e5] hover:border-[#0066cc]"
-                }`}
-              >
-                {topping.name}
-              </button>
-            );
-          })}
+function VeggiesNodeContent({
+  order,
+  onVeggieToggle,
+}: {
+  order: Order;
+  onVeggieToggle: (veggie: Veggie) => void;
+}) {
+  if (order.mealType !== "grown-ups" || !order.base) {
+    return <p className="text-[#999999] text-xs">Complete previous step first</p>;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {veggies.map((veggie) => {
+        const isSelected = order.veggies.some((v) => v.id === veggie.id);
+        return (
+          <button
+            key={veggie.id}
+            type="button"
+            onClick={() => onVeggieToggle(veggie)}
+            className={`px-3 py-1.5 rounded-sm border text-xs transition-all ${
+              isSelected
+                ? "border-[#0066cc] bg-[#f0f7ff] text-[#0066cc]"
+                : "border-[#e5e5e5] hover:border-[#0066cc]"
+            }`}
+          >
+            {veggie.name}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function ProteinsNodeContent({
+  order,
+  onProteinToggle,
+}: {
+  order: Order;
+  onProteinToggle: (protein: Protein) => void;
+}) {
+  if (order.mealType !== "grown-ups" || !order.base) {
+    return <p className="text-[#999999] text-xs">Complete previous step first</p>;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {proteins.map((protein) => {
+        const isSelected = order.proteins.some((p) => p.id === protein.id);
+        return (
+          <button
+            key={protein.id}
+            type="button"
+            onClick={() => onProteinToggle(protein)}
+            className={`px-3 py-1.5 rounded-sm border text-xs transition-all ${
+              isSelected
+                ? "border-[#0066cc] bg-[#f0f7ff] text-[#0066cc]"
+                : "border-[#e5e5e5] hover:border-[#0066cc]"
+            }`}
+          >
+            {protein.name}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function KidsNodeContent({
+  order,
+  onKidsMealSelect,
+}: {
+  order: Order;
+  onKidsMealSelect: (selected: boolean) => void;
+}) {
+  if (order.mealType !== "kids") {
+    return <p className="text-[#999999] text-xs">Complete previous step first</p>;
+  }
+
+  return (
+    <div className="space-y-2">
+      <button
+        type="button"
+        onClick={() => onKidsMealSelect(!order.kidsMeal)}
+        className={`w-full text-left p-2 rounded-sm border transition-all ${
+          order.kidsMeal
+            ? "border-[#0066cc] bg-[#f0f7ff]"
+            : "border-[#e5e5e5] hover:border-[#0066cc]"
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium">Frikandel with andalouse</span>
+          {order.kidsMeal && (
+            <svg className="w-4 h-4 text-[#0066cc]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          )}
         </div>
-      </div>
+      </button>
     </div>
   );
 }
 
 function OrderNodeComponent({ data }: { data: OrderNodeData }) {
+  const getNodeType = (): NodeType => {
+    if (data.type === "trigger") return "trigger";
+    if (data.type === "condition") return "condition";
+    return "action";
+  };
+
+  const nodeType = getNodeType();
   const isCompleted =
-    (data.type === "spritz" && !!data.order.spritz) ||
-    (data.type === "appetizer" && !!data.order.appetizer) ||
-    (data.type === "risotto" && !!data.order.risottoBase);
+    (data.type === "trigger") ||
+    (data.type === "condition" && !!data.order.mealType) ||
+    (data.type === "base" && !!data.order.base) ||
+    (data.type === "veggies" && data.order.veggies.length > 0) ||
+    (data.type === "proteins" && data.order.proteins.length > 0) ||
+    (data.type === "kids" && !!data.order.kidsMeal);
 
   const isActive =
-    (data.type === "spritz" && !data.order.spritz) ||
-    (data.type === "appetizer" && !!data.order.spritz && !data.order.appetizer) ||
-    (data.type === "risotto" && !!data.order.appetizer && !data.order.risottoBase);
+    (data.type === "trigger") ||
+    (data.type === "condition" && !data.order.mealType) ||
+    (data.type === "base" && data.order.mealType === "grown-ups" && !data.order.base) ||
+    (data.type === "veggies" && data.order.mealType === "grown-ups" && !!data.order.base && data.order.veggies.length === 0) ||
+    (data.type === "proteins" && data.order.mealType === "grown-ups" && !!data.order.base && data.order.proteins.length === 0) ||
+    (data.type === "kids" && data.order.mealType === "kids" && !data.order.kidsMeal);
 
   const getIcon = () => {
     switch (data.type) {
-      case "spritz":
-        return <Wine size={15} className="text-[#0066cc]" />;
-      case "appetizer":
-        return <UtensilsCrossed size={15} className="text-[#0066cc]" />;
-      case "risotto":
+      case "trigger":
+        return <Zap size={15} className="text-red-600" />;
+      case "condition":
+        return <GitBranch size={15} className="text-orange-600" />;
+      case "base":
         return <ChefHat size={15} className="text-[#0066cc]" />;
+      case "veggies":
+        return <Carrot size={15} className="text-[#0066cc]" />;
+      case "proteins":
+        return <Beef size={15} className="text-[#0066cc]" />;
+      case "kids":
+        return <Baby size={15} className="text-[#0066cc]" />;
     }
   };
 
   const getTitle = () => {
     switch (data.type) {
-      case "spritz":
-        return "Choose your spritz";
-      case "appetizer":
-        return "Choose your appetizer";
-      case "risotto":
-        return "Compose your risotto";
+      case "trigger":
+        return "Trigger";
+      case "condition":
+        return "Grown-ups or Kids";
+      case "base":
+        return "Step 1: Choose your base";
+      case "veggies":
+        return "Step 2: Choose your veggies";
+      case "proteins":
+        return "Step 3: Choose your proteins";
+      case "kids":
+        return "Step 1: Kid's meal";
     }
   };
 
   const renderContent = () => {
     switch (data.type) {
-      case "spritz":
-        return <SpritzNodeContent order={data.order} onSpritzSelect={data.onSpritzSelect} />;
-      case "appetizer":
-        return <AppetizerNodeContent order={data.order} onAppetizerSelect={data.onAppetizerSelect} />;
-      case "risotto":
-        return (
-          <RisottoNodeContent
-            order={data.order}
-            onBaseSelect={data.onBaseSelect}
-            onToppingToggle={data.onToppingToggle}
-          />
-        );
+      case "trigger":
+        return <TriggerNodeContent />;
+      case "condition":
+        return <ConditionNodeContent order={data.order} onMealTypeSelect={data.onMealTypeSelect!} />;
+      case "base":
+        return <BaseNodeContent order={data.order} onBaseSelect={data.onBaseSelect!} />;
+      case "veggies":
+        return <VeggiesNodeContent order={data.order} onVeggieToggle={data.onVeggieToggle!} />;
+      case "proteins":
+        return <ProteinsNodeContent order={data.order} onProteinToggle={data.onProteinToggle!} />;
+      case "kids":
+        return <KidsNodeContent order={data.order} onKidsMealSelect={data.onKidsMealSelect!} />;
     }
   };
 
+  const showTargetHandle = data.type !== "trigger";
+  const showSourceHandle = data.type !== "kids" && data.type !== "proteins";
+
   return (
     <>
-      {data.type !== "spritz" && (
+      {showTargetHandle && (
         <Handle type="target" position={Position.Top} className="!bg-[#0066cc] !w-1 !h-1" />
       )}
       <OrderNode.Wrapper>
@@ -236,19 +326,20 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
           highlightNode={isActive}
           isCompleted={isCompleted}
           isActive={isActive}
+          nodeType={nodeType}
         >
           <OrderNode.Header>
-            <OrderNode.Icon icon={getIcon()} />
+            <OrderNode.Icon icon={getIcon()} nodeType={nodeType} />
             <div className="flex items-center justify-between h-10 w-full">
               <OrderNode.Title name={getTitle()} />
-              <OrderNode.StatusIndicator isCompleted={isCompleted} isActive={isActive} />
+              <OrderNode.StatusIndicator isCompleted={isCompleted} isActive={isActive} nodeType={nodeType} />
             </div>
           </OrderNode.Header>
           <OrderNode.Separator />
           <OrderNode.Content>{renderContent()}</OrderNode.Content>
         </OrderNode.Container>
       </OrderNode.Wrapper>
-      {data.type !== "risotto" && (
+      {showSourceHandle && (
         <Handle type="source" position={Position.Bottom} className="!bg-[#0066cc] !w-1 !h-1" />
       )}
     </>
@@ -262,153 +353,295 @@ const nodeTypes = {
 export default function OrderFlow() {
   const router = useRouter();
   const [order, setOrder] = useState<Order>({
-    toppings: [],
+    veggies: [],
+    proteins: [],
   });
 
-  const handleSpritzSelect = useCallback((spritz: SpritzOption) => {
-    setOrder((prev) => ({ ...prev, spritz }));
-  }, []);
-
-  const handleAppetizerSelect = useCallback((appetizer: AppetizerOption) => {
-    setOrder((prev) => ({ ...prev, appetizer }));
+  const handleMealTypeSelect = useCallback((type: "grown-ups" | "kids") => {
+    setOrder((prev) => ({ ...prev, mealType: type }));
   }, []);
 
   const handleBaseSelect = useCallback((base: RisottoBase) => {
-    setOrder((prev) => ({ ...prev, risottoBase: base }));
+    setOrder((prev) => ({ ...prev, base }));
   }, []);
 
-  const handleToppingToggle = useCallback((topping: Topping) => {
+  const handleVeggieToggle = useCallback((veggie: Veggie) => {
     setOrder((prev) => {
-      const isSelected = prev.toppings.some((t) => t.id === topping.id);
+      const isSelected = prev.veggies.some((v) => v.id === veggie.id);
       return {
         ...prev,
-        toppings: isSelected
-          ? prev.toppings.filter((t) => t.id !== topping.id)
-          : [...prev.toppings, topping],
+        veggies: isSelected
+          ? prev.veggies.filter((v) => v.id !== veggie.id)
+          : [...prev.veggies, veggie],
       };
     });
   }, []);
 
-  // Calculate dynamic node heights and positions
+  const handleProteinToggle = useCallback((protein: Protein) => {
+    setOrder((prev) => {
+      const isSelected = prev.proteins.some((p) => p.id === protein.id);
+      return {
+        ...prev,
+        proteins: isSelected
+          ? prev.proteins.filter((p) => p.id !== protein.id)
+          : [...prev.proteins, protein],
+      };
+    });
+  }, []);
+
+  const handleKidsMealSelect = useCallback((selected: boolean) => {
+    setOrder((prev) => ({ ...prev, kidsMeal: selected }));
+  }, []);
+
+  // Calculate node positions dynamically
   const calculateNodePositions = useCallback(() => {
-    const NODE_SPACING = 50; // Space between nodes
-    const BASE_HEIGHT = 90; // Minimum node height
-    const HEADER_HEIGHT = 50; // Header + separator height
-    const ITEM_HEIGHT = 40; // Height per item in lists
-    const PADDING = 16; // Content padding
-
     let currentY = 0;
+    const positions: Record<string, number> = {};
 
-    // Spritz node
-    const spritzItems = spritzes.length;
-    const spritzHeight = BASE_HEIGHT + HEADER_HEIGHT + (spritzItems * ITEM_HEIGHT) + PADDING;
-    const spritzY = currentY;
-    currentY += spritzHeight + NODE_SPACING;
+    // Trigger
+    positions.trigger = currentY;
+    currentY += 120 + NODE_SPACING;
 
-    // Appetizer node
-    const appetizerItems = order.spritz ? appetizers.length : 0;
-    const appetizerHeight = BASE_HEIGHT + HEADER_HEIGHT + (appetizerItems > 0 ? appetizerItems * ITEM_HEIGHT : 30) + PADDING;
-    const appetizerY = currentY;
-    currentY += appetizerHeight + NODE_SPACING;
+    // Condition
+    positions.condition = currentY;
+    currentY += 120 + NODE_SPACING;
 
-    // Risotto node
-    const risottoBaseItems = order.appetizer ? risottoBases.length : 0;
-    const risottoToppingsRows = order.appetizer ? Math.ceil(toppings.length / 4) : 0;
-    const risottoHeight = BASE_HEIGHT + HEADER_HEIGHT + 
-      (risottoBaseItems > 0 ? risottoBaseItems * ITEM_HEIGHT + 20 : 30) + // Base section
-      (risottoToppingsRows > 0 ? risottoToppingsRows * 30 + 20 : 0) + // Toppings section
-      PADDING;
-    const risottoY = currentY;
+    if (order.mealType === "grown-ups") {
+      // Base
+      positions.base = currentY;
+      currentY += 150 + NODE_SPACING;
+      // Veggies
+      positions.veggies = currentY;
+      currentY += 120 + NODE_SPACING;
+      // Proteins
+      positions.proteins = currentY;
+    } else if (order.mealType === "kids") {
+      // Kids meal
+      positions.kids = currentY;
+    }
 
-    return {
-      spritz: { y: spritzY, height: spritzHeight },
-      appetizer: { y: appetizerY, height: appetizerHeight },
-      risotto: { y: risottoY, height: risottoHeight },
-    };
+    return positions;
   }, [order]);
 
   const nodePositions = calculateNodePositions();
 
-  const initialNodes: Node<OrderNodeData>[] = useMemo(
-    () => [
+  const initialNodes: Node<OrderNodeData>[] = useMemo(() => {
+    const nodes: Node<OrderNodeData>[] = [
       {
-        id: "spritz",
+        id: "trigger",
         type: "orderNode",
-        position: { x: 0, y: nodePositions.spritz.y },
+        position: { x: 0, y: nodePositions.trigger },
         data: {
-          type: "spritz",
+          type: "trigger",
           order,
-          onSpritzSelect: handleSpritzSelect,
-          onAppetizerSelect: handleAppetizerSelect,
+          onMealTypeSelect: handleMealTypeSelect,
           onBaseSelect: handleBaseSelect,
-          onToppingToggle: handleToppingToggle,
+          onVeggieToggle: handleVeggieToggle,
+          onProteinToggle: handleProteinToggle,
+          onKidsMealSelect: handleKidsMealSelect,
         },
       },
       {
-        id: "appetizer",
+        id: "condition",
         type: "orderNode",
-        position: { x: 0, y: nodePositions.appetizer.y },
+        position: { x: 0, y: nodePositions.condition },
         data: {
-          type: "appetizer",
+          type: "condition",
           order,
-          onSpritzSelect: handleSpritzSelect,
-          onAppetizerSelect: handleAppetizerSelect,
+          onMealTypeSelect: handleMealTypeSelect,
           onBaseSelect: handleBaseSelect,
-          onToppingToggle: handleToppingToggle,
+          onVeggieToggle: handleVeggieToggle,
+          onProteinToggle: handleProteinToggle,
+          onKidsMealSelect: handleKidsMealSelect,
         },
       },
-      {
-        id: "risotto",
-        type: "orderNode",
-        position: { x: 0, y: nodePositions.risotto.y },
-        data: {
-          type: "risotto",
-          order,
-          onSpritzSelect: handleSpritzSelect,
-          onAppetizerSelect: handleAppetizerSelect,
-          onBaseSelect: handleBaseSelect,
-          onToppingToggle: handleToppingToggle,
-        },
-      },
-    ],
-    [order, handleSpritzSelect, handleAppetizerSelect, handleBaseSelect, handleToppingToggle, nodePositions]
-  );
+    ];
 
-  const initialEdges: Edge[] = useMemo(
-    () => [
-      { id: "e1-2", source: "spritz", target: "appetizer", type: "smoothstep" },
-      { id: "e2-3", source: "appetizer", target: "risotto", type: "smoothstep" },
-    ],
-    []
-  );
+    if (order.mealType === "grown-ups") {
+      nodes.push(
+        {
+          id: "base",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.base },
+          data: {
+            type: "base",
+            order,
+            onMealTypeSelect: handleMealTypeSelect,
+            onBaseSelect: handleBaseSelect,
+            onVeggieToggle: handleVeggieToggle,
+            onProteinToggle: handleProteinToggle,
+            onKidsMealSelect: handleKidsMealSelect,
+          },
+        },
+        {
+          id: "veggies",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.veggies },
+          data: {
+            type: "veggies",
+            order,
+            onMealTypeSelect: handleMealTypeSelect,
+            onBaseSelect: handleBaseSelect,
+            onVeggieToggle: handleVeggieToggle,
+            onProteinToggle: handleProteinToggle,
+            onKidsMealSelect: handleKidsMealSelect,
+          },
+        },
+        {
+          id: "proteins",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.proteins },
+          data: {
+            type: "proteins",
+            order,
+            onMealTypeSelect: handleMealTypeSelect,
+            onBaseSelect: handleBaseSelect,
+            onVeggieToggle: handleVeggieToggle,
+            onProteinToggle: handleProteinToggle,
+            onKidsMealSelect: handleKidsMealSelect,
+          },
+        }
+      );
+    } else if (order.mealType === "kids") {
+      nodes.push({
+        id: "kids",
+        type: "orderNode",
+        position: { x: 0, y: nodePositions.kids },
+        data: {
+          type: "kids",
+          order,
+          onMealTypeSelect: handleMealTypeSelect,
+          onBaseSelect: handleBaseSelect,
+          onVeggieToggle: handleVeggieToggle,
+          onProteinToggle: handleProteinToggle,
+          onKidsMealSelect: handleKidsMealSelect,
+        },
+      });
+    }
+
+    return nodes;
+  }, [order, handleMealTypeSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, nodePositions]);
+
+  const initialEdges: Edge[] = useMemo(() => {
+    const edges: Edge[] = [
+      { id: "e-trigger-condition", source: "trigger", target: "condition", type: "smoothstep" },
+    ];
+
+    if (order.mealType === "grown-ups") {
+      edges.push(
+        { id: "e-condition-base", source: "condition", target: "base", type: "smoothstep" },
+        { id: "e-base-veggies", source: "base", target: "veggies", type: "smoothstep" },
+        { id: "e-veggies-proteins", source: "veggies", target: "proteins", type: "smoothstep" }
+      );
+    } else if (order.mealType === "kids") {
+      edges.push({ id: "e-condition-kids", source: "condition", target: "kids", type: "smoothstep" });
+    }
+
+    return edges;
+  }, [order]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, , onEdgesChange] = useEdgesState(initialEdges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  // Update nodes when order changes - recalculate positions
+  // Update nodes when order changes
   React.useEffect(() => {
     const positions = calculateNodePositions();
-    setNodes((nds: Node<OrderNodeData>[]) =>
-      nds.map((node: Node<OrderNodeData>) => {
-        let newY = node.position.y;
-        if (node.id === "spritz") {
-          newY = positions.spritz.y;
-        } else if (node.id === "appetizer") {
-          newY = positions.appetizer.y;
-        } else if (node.id === "risotto") {
-          newY = positions.risotto.y;
-        }
-        return {
-          ...node,
-          position: { ...node.position, y: newY },
-          data: {
-            ...node.data,
+    setNodes((nds: Node<OrderNodeData>[]) => {
+      const nodeMap = new Map(nds.map((n) => [n.id, n]));
+      const newNodes: Node<OrderNodeData>[] = [];
+
+      // Always include trigger and condition
+      if (nodeMap.has("trigger")) {
+        newNodes.push({
+          ...nodeMap.get("trigger")!,
+          position: { x: 0, y: positions.trigger },
+          data: { ...nodeMap.get("trigger")!.data, order },
+        });
+      }
+      if (nodeMap.has("condition")) {
+        newNodes.push({
+          ...nodeMap.get("condition")!,
+          position: { x: 0, y: positions.condition },
+          data: { ...nodeMap.get("condition")!.data, order },
+        });
+      }
+
+      // Add grown-ups nodes
+      if (order.mealType === "grown-ups") {
+        ["base", "veggies", "proteins"].forEach((id) => {
+          if (nodeMap.has(id)) {
+            newNodes.push({
+              ...nodeMap.get(id)!,
+              position: { x: 0, y: positions[id as keyof typeof positions] },
+              data: { ...nodeMap.get(id)!.data, order },
+            });
+          } else {
+            // Create new node
+            const nodeData: OrderNodeData = {
+              type: id as "base" | "veggies" | "proteins",
+              order,
+              onMealTypeSelect: handleMealTypeSelect,
+              onBaseSelect: handleBaseSelect,
+              onVeggieToggle: handleVeggieToggle,
+              onProteinToggle: handleProteinToggle,
+              onKidsMealSelect: handleKidsMealSelect,
+            };
+            newNodes.push({
+              id,
+              type: "orderNode",
+              position: { x: 0, y: positions[id as keyof typeof positions] },
+              data: nodeData,
+            });
+          }
+        });
+      } else if (order.mealType === "kids") {
+        if (nodeMap.has("kids")) {
+          newNodes.push({
+            ...nodeMap.get("kids")!,
+            position: { x: 0, y: positions.kids },
+            data: { ...nodeMap.get("kids")!.data, order },
+          });
+        } else {
+          const nodeData: OrderNodeData = {
+            type: "kids",
             order,
-          },
-        };
-      })
-    );
-  }, [order, setNodes, calculateNodePositions]);
+            onMealTypeSelect: handleMealTypeSelect,
+            onBaseSelect: handleBaseSelect,
+            onVeggieToggle: handleVeggieToggle,
+            onProteinToggle: handleProteinToggle,
+            onKidsMealSelect: handleKidsMealSelect,
+          };
+          newNodes.push({
+            id: "kids",
+            type: "orderNode",
+            position: { x: 0, y: positions.kids },
+            data: nodeData,
+          });
+        }
+      }
+
+      return newNodes;
+    });
+  }, [order, setNodes, calculateNodePositions, handleMealTypeSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect]);
+
+  // Update edges when order changes
+  React.useEffect(() => {
+    const newEdges: Edge[] = [
+      { id: "e-trigger-condition", source: "trigger", target: "condition", type: "smoothstep" },
+    ];
+
+    if (order.mealType === "grown-ups") {
+      newEdges.push(
+        { id: "e-condition-base", source: "condition", target: "base", type: "smoothstep" },
+        { id: "e-base-veggies", source: "base", target: "veggies", type: "smoothstep" },
+        { id: "e-veggies-proteins", source: "veggies", target: "proteins", type: "smoothstep" }
+      );
+    } else if (order.mealType === "kids") {
+      newEdges.push({ id: "e-condition-kids", source: "condition", target: "kids", type: "smoothstep" });
+    }
+
+    setEdges(newEdges);
+  }, [order, setEdges]);
 
   const handleOrder = () => {
     const orderData = JSON.stringify(order);
@@ -416,7 +649,10 @@ export default function OrderFlow() {
     router.push("/order/confirmation");
   };
 
-  const canOrder = order.spritz && order.appetizer && order.risottoBase;
+  const canOrder =
+    order.mealType === "grown-ups"
+      ? !!order.base && order.veggies.length > 0 && order.proteins.length > 0
+      : order.mealType === "kids" && !!order.kidsMeal;
 
   return (
     <div className="min-h-screen bg-white">
