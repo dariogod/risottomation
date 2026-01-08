@@ -340,13 +340,13 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
       case "spritz":
         return "Choose your spritz";
       case "base":
-        return "Step 1: Choose your base";
+        return "Choose your risotto base";
       case "veggies":
-        return "Step 2: Choose your veggies";
+        return "Choose your veggies";
       case "proteins":
-        return "Step 3: Choose your proteins";
+        return "Choose your proteins";
       case "kids":
-        return "Step 1: Kid's meal";
+        return "Kid's meal";
       case "submit":
         return "Place your order";
     }

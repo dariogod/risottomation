@@ -7,7 +7,7 @@ export const nodeHeights: Record<string, number> = {
   trigger: 80,
   condition: 140,
   spritz: 190,
-  base: 190,
+  base: 150,
   veggies: 130,
   proteins: 130,
   kids: 100,
