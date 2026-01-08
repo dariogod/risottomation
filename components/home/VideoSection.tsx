@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 interface VideoSectionProps {
   videoUrl?: string;
   videoId?: string; // For YouTube/Vimeo
@@ -27,7 +25,7 @@ export default function VideoSection({
   const embedUrl = getEmbedUrl();
 
   return (
-    <section className="relative w-full py-12 md:py-20 bg-[#faf0d8]">
+    <section id="video" className="relative w-full py-12 md:py-20 bg-[#faf0d8]">
       <div className="max-w-6xl mx-auto px-4">
         {embedUrl ? (
           <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-xl">

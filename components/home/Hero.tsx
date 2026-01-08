@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 
 export default function Hero() {
@@ -21,13 +20,13 @@ export default function Hero() {
         </h1>
         
         {/* Slogan */}
-        <p className="text-xl md:text-2xl lg:text-3xl font-medium text-[#4d0629] mb-8 md:mb-12 px-2">
-          Fast food, but good.
+        <p className="relative z-20 text-xl md:text-2xl lg:text-3xl font-medium text-[#4d0629] mb-2 md:mb-4 px-2">
+          Automate the boring Risotto.
         </p>
         
         {/* Risotto bowl image */}
-        <div className="relative w-full float -mx-4 md:mx-auto md:w-auto">
-          <div className="relative w-full aspect-square md:w-96 md:h-96 md:mx-auto">
+        <div className="relative w-full float -mx-4 md:mx-auto md:w-auto -mt-20 md:-mt-40 z-0">
+          <div className="relative w-full aspect-square md:w-[650px] md:h-[650px] lg:w-[750px] lg:h-[750px] md:mx-auto">
             <Image
               src="/risotto-bowl-2.png"
               alt="Delicious risotto bowl with pumpkin, mushrooms, chorizo, and seeds"
@@ -44,12 +43,13 @@ export default function Hero() {
         </div>
         
         {/* Scroll down arrow */}
-        <div className="relative z-10 mt-8 md:mt-12 animate-bounce">
+        <div className="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 z-30 animate-bounce">
           <a 
-            href="#favorites" 
+            href="#video" 
             className="inline-flex flex-col items-center text-[#4d0629] hover:text-[#4d0629]/80 transition-colors"
-            aria-label="Scroll to favorites"
+            aria-label="Scroll to video"
           >
+            <span className="sr-only">Scroll to video</span>
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               className="w-8 h-8 md:w-10 md:h-10" 
@@ -57,6 +57,7 @@ export default function Hero() {
               viewBox="0 0 24 24" 
               stroke="currentColor"
               strokeWidth={2}
+              aria-hidden="true"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
@@ -70,6 +71,7 @@ export default function Hero() {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
+          aria-hidden="true"
         >
           <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C57.1,118.92,118.89,111.31,176.24,92.22,246.72,68.62,269.58,66.39,321.39,56.44Z" fill="#faf0d8" />
         </svg>

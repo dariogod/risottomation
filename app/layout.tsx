@@ -10,7 +10,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Risottomation - Fast food, but good.",
+  title: "Risottomation",
   description: "Create your own custom risotto bowl. Choose your spritz, appetizer, and compose your perfect risotto with our selection of bases and toppings.",
 };
 
