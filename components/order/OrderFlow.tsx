@@ -106,25 +106,23 @@ function SpritzNodeContent({
     <div className="space-y-2">
       {spritzes.map((spritz) => {
         const isSelected = order.spritz?.id === spritz.id;
+        const isNoneOption = spritz.id === "no-spritz";
         return (
           <button
             key={spritz.id}
             type="button"
             onClick={() => onSpritzSelect(spritz)}
-            className={`w-full text-left p-2 rounded-sm border transition-all ${
-              isSelected
-                ? "border-orange-600 bg-orange-50"
-                : "border-[#e5e5e5] hover:border-orange-600"
+            className={`w-full text-left px-3 py-1.5 rounded-sm border text-xs transition-all ${
+              isNoneOption
+                ? isSelected
+                  ? "border-orange-600 bg-orange-50 text-orange-600 border-dashed"
+                  : "border-dashed border-neutral-300 text-neutral-400 hover:border-neutral-400 hover:text-neutral-500"
+                : isSelected
+                  ? "border-orange-600 bg-orange-50 text-orange-600"
+                  : "border-[#e5e5e5] hover:border-orange-600"
             }`}
           >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{spritz.name}</span>
-              {isSelected && (
-                <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-            </div>
+            {spritz.name}
           </button>
         );
       })}
@@ -189,7 +187,7 @@ function VeggiesNodeContent({
             className={`px-3 py-1.5 rounded-sm border text-xs transition-all ${
               isNoneOption
                 ? isSelected
-                  ? "border-neutral-500 bg-neutral-100 text-neutral-600 border-dashed"
+                  ? "border-green-600 bg-green-50 text-green-600 border-dashed"
                   : "border-dashed border-neutral-300 text-neutral-400 hover:border-neutral-400 hover:text-neutral-500"
                 : isSelected
                   ? "border-green-600 bg-green-50 text-green-600"
@@ -224,7 +222,7 @@ function ProteinsNodeContent({
             className={`px-3 py-1.5 rounded-sm border text-xs transition-all ${
               isNoneOption
                 ? isSelected
-                  ? "border-neutral-500 bg-neutral-100 text-neutral-600 border-dashed"
+                  ? "border-orange-600 bg-orange-50 text-orange-600 border-dashed"
                   : "border-dashed border-neutral-300 text-neutral-400 hover:border-neutral-400 hover:text-neutral-500"
                 : isSelected
                   ? "border-orange-600 bg-orange-50 text-orange-600"
