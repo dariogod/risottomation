@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import Button from "@/components/Button";
 
 export default function Hero() {
   return (
@@ -17,27 +16,14 @@ export default function Hero() {
       
       <div className="relative z-10 max-w-4xl mx-auto text-center fade-in-up">
         {/* Title */}
-        <h1 className="text-6xl md:text-8xl font-bold text-[#1a1a1a] mb-3 leading-tight tracking-tight">
+        <h1 className="text-6xl md:text-8xl font-bold text-[#4d0629] mb-3 leading-tight tracking-tight">
           Risottomation
         </h1>
-        <h2 className="text-4xl md:text-5xl font-semibold text-[#1a1a1a] mb-8">
-          Risotto Bowl
-        </h2>
         
         {/* Slogan */}
-        <p className="text-2xl md:text-3xl font-medium text-[#1a1a1a] mb-12">
+        <p className="text-2xl md:text-3xl font-medium text-[#4d0629] mb-12">
           Fast food, but good.
         </p>
-        
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-          <Button href="/order" variant="coral" className="text-lg px-8 py-4 bg-white text-[#1a1a1a] hover:bg-[#f5f5f5] border-0 shadow-lg">
-            Order online
-          </Button>
-          <Button href="#favorites" variant="outline" className="text-lg px-8 py-4 bg-transparent text-[#1a1a1a] border-2 border-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white">
-            Or check our menu
-          </Button>
-        </div>
         
         {/* Risotto bowl image */}
         <div className="relative mx-auto float">
@@ -65,7 +51,7 @@ export default function Hero() {
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
         >
-          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C57.1,118.92,118.89,111.31,176.24,92.22,246.72,68.62,269.58,66.39,321.39,56.44Z" />
+          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C57.1,118.92,118.89,111.31,176.24,92.22,246.72,68.62,269.58,66.39,321.39,56.44Z" fill="#faf0d8" />
         </svg>
       </div>
     </section>

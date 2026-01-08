@@ -77,7 +77,7 @@ a, button {
 }
 
 .wave-divider.wave-cream svg path {
-  fill: var(--white);
+  fill: #faf0d8;
 }
 
 .wave-divider.wave-yellow svg path {
@@ -129,21 +129,21 @@ a, button {
 
 /* Card styles */
 .favorite-card {
-  background: var(--white);
+  background: #ffd159;
   border-radius: 1.5rem;
   padding: 2rem;
   width: 85vw;
   max-width: 340px;
   position: relative;
   box-shadow: var(--shadow-lg);
-  border: 2px solid var(--yellow-light);
+  border: 2px solid rgba(77, 6, 41, 0.1);
   transition: all 0.3s ease;
 }
 
 .favorite-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-xl);
-  border-color: var(--yellow-primary);
+  border-color: rgba(77, 6, 41, 0.3);
 }
 
 .favorite-card::before {
@@ -153,7 +153,7 @@ a, button {
   right: 0;
   width: 40px;
   height: 40px;
-  background: var(--yellow-primary);
+  background: #4d0629;
   border-radius: 50%;
   display: flex;
   align-items: center;
