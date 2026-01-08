@@ -256,7 +256,7 @@ function KidsNodeContent({
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Risotto with frikandel & andalouse</span>
+          <span className="text-sm font-medium">Risotto frikandel & andalouse</span>
           {order.kidsMeal && (
             <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
