@@ -68,6 +68,11 @@ export const veggies: Veggie[] = [
     name: "Leek",
     description: "Leek",
   },
+  {
+    id: "no-veggies",
+    name: "No veggies",
+    description: "No vegetables",
+  },
 ];
 
 export const proteins: Protein[] = [
@@ -90,6 +95,11 @@ export const proteins: Protein[] = [
     id: "guanciale",
     name: "Guanciale",
     description: "Guanciale",
+  },
+  {
+    id: "no-protein",
+    name: "No protein",
+    description: "No protein topping",
   },
 ];
 

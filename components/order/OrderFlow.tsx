@@ -179,15 +179,20 @@ function VeggiesNodeContent({
     <div className="flex flex-wrap gap-2">
       {veggies.map((veggie) => {
         const isSelected = order.veggies.some((v) => v.id === veggie.id);
+        const isNoneOption = veggie.id === "no-veggies";
         return (
           <button
             key={veggie.id}
             type="button"
             onClick={() => onVeggieToggle(veggie)}
             className={`px-3 py-1.5 rounded-sm border text-xs transition-all ${
-              isSelected
-                ? "border-green-600 bg-green-50 text-green-600"
-                : "border-[#e5e5e5] hover:border-green-600"
+              isNoneOption
+                ? isSelected
+                  ? "border-neutral-500 bg-neutral-100 text-neutral-600 border-dashed"
+                  : "border-dashed border-neutral-300 text-neutral-400 hover:border-neutral-400 hover:text-neutral-500"
+                : isSelected
+                  ? "border-green-600 bg-green-50 text-green-600"
+                  : "border-[#e5e5e5] hover:border-green-600"
             }`}
           >
             {veggie.name}
@@ -209,15 +214,20 @@ function ProteinsNodeContent({
     <div className="flex flex-wrap gap-2">
       {proteins.map((protein) => {
         const isSelected = order.proteins.some((p) => p.id === protein.id);
+        const isNoneOption = protein.id === "no-protein";
         return (
           <button
             key={protein.id}
             type="button"
             onClick={() => onProteinToggle(protein)}
             className={`px-3 py-1.5 rounded-sm border text-xs transition-all ${
-              isSelected
-                ? "border-orange-600 bg-orange-50 text-orange-600"
-                : "border-[#e5e5e5] hover:border-orange-600"
+              isNoneOption
+                ? isSelected
+                  ? "border-neutral-500 bg-neutral-100 text-neutral-600 border-dashed"
+                  : "border-dashed border-neutral-300 text-neutral-400 hover:border-neutral-400 hover:text-neutral-500"
+                : isSelected
+                  ? "border-orange-600 bg-orange-50 text-orange-600"
+                  : "border-[#e5e5e5] hover:border-orange-600"
             }`}
           >
             {protein.name}
@@ -443,11 +453,27 @@ export default function OrderFlow() {
   const handleVeggieToggle = useCallback((veggie: Veggie) => {
     setOrder((prev) => {
       const isSelected = prev.veggies.some((v) => v.id === veggie.id);
+      
+      // If already selected, just deselect it
+      if (isSelected) {
+        return {
+          ...prev,
+          veggies: prev.veggies.filter((v) => v.id !== veggie.id),
+        };
+      }
+      
+      // If selecting "no veggies", clear all others
+      if (veggie.id === "no-veggies") {
+        return {
+          ...prev,
+          veggies: [veggie],
+        };
+      }
+      
+      // If selecting a regular veggie, remove "no veggies" if present and add the new one
       return {
         ...prev,
-        veggies: isSelected
-          ? prev.veggies.filter((v) => v.id !== veggie.id)
-          : [...prev.veggies, veggie],
+        veggies: [...prev.veggies.filter((v) => v.id !== "no-veggies"), veggie],
       };
     });
   }, []);
@@ -455,11 +481,27 @@ export default function OrderFlow() {
   const handleProteinToggle = useCallback((protein: Protein) => {
     setOrder((prev) => {
       const isSelected = prev.proteins.some((p) => p.id === protein.id);
+      
+      // If already selected, just deselect it
+      if (isSelected) {
+        return {
+          ...prev,
+          proteins: prev.proteins.filter((p) => p.id !== protein.id),
+        };
+      }
+      
+      // If selecting "no protein", clear all others
+      if (protein.id === "no-protein") {
+        return {
+          ...prev,
+          proteins: [protein],
+        };
+      }
+      
+      // If selecting a regular protein, remove "no protein" if present and add the new one
       return {
         ...prev,
-        proteins: isSelected
-          ? prev.proteins.filter((p) => p.id !== protein.id)
-          : [...prev.proteins, protein],
+        proteins: [...prev.proteins.filter((p) => p.id !== "no-protein"), protein],
       };
     });
   }, []);
