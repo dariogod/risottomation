@@ -156,20 +156,6 @@ input:focus-visible {
   border-color: rgba(77, 6, 41, 0.3);
 }
 
-.favorite-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 40px;
-  height: 40px;
-  background: #4d0629;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: translate(10px, -10px);
-}
 
 /* Image placeholder circle */
 .image-circle {
