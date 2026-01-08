@@ -5,46 +5,12 @@ import Image from "next/image";
 import Button from "@/components/Button";
 import { favorites } from "@/lib/data";
 
-function AllergenIcon({ className = "" }: { className?: string }) {
-  return (
-    <button
-      className={`w-8 h-8 rounded-full bg-[#0a1628] text-white flex items-center justify-center text-sm font-bold hover:bg-[#152238] transition-colors ${className}`}
-      aria-label="Allergen information"
-    >
-      i
-    </button>
-  );
-}
-
 function DishCard({ dish, index }: { dish: typeof favorites[0]; index: number }) {
-  const [showAllergens, setShowAllergens] = useState(false);
-  
   return (
     <div 
       className="favorite-card relative"
       style={{ animationDelay: `${index * 100}ms` }}
     >
-      {/* Allergen info button */}
-      <div className="absolute top-4 right-4 z-10">
-        <button
-          onClick={() => setShowAllergens(!showAllergens)}
-          className="w-8 h-8 rounded-full bg-white text-[#4d0629] flex items-center justify-center text-sm font-bold hover:bg-[#f5f5f5] transition-colors shadow-md"
-          aria-label="Allergen information"
-        >
-          i
-        </button>
-      </div>
-      
-      {/* Allergen popup */}
-      {showAllergens && (
-        <div className="absolute top-14 right-4 bg-white rounded-lg shadow-xl p-3 z-20 min-w-[160px] border-2 border-[#4d0629]">
-          <p className="text-xs font-semibold text-[#4d0629] mb-1">Allergens</p>
-          <p className="text-xs text-[#4d0629]/70">
-            {dish.allergens?.join(", ") || "None"}
-          </p>
-        </div>
-      )}
-      
       {/* Dish image */}
       {dish.image && (
         <div className="image-circle mx-auto mb-6 overflow-hidden">
@@ -64,25 +30,9 @@ function DishCard({ dish, index }: { dish: typeof favorites[0]; index: number })
       </h3>
       
       {/* Description */}
-      <p className="text-[#4d0629]/70 text-sm text-center mb-6 leading-relaxed">
+      <p className="text-[#4d0629]/70 text-sm text-center leading-relaxed">
         {dish.description}
       </p>
-      
-      {/* Order button */}
-      <div className="flex justify-center">
-        <Button href="/order" variant="coral" className="text-sm bg-white text-[#4d0629] hover:bg-[#f5f5f5] border-0">
-          Order online
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            className="w-4 h-4 ml-2" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </Button>
-      </div>
     </div>
   );
 }
