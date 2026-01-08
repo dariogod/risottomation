@@ -14,19 +14,20 @@ import {
   Position,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Zap, GitBranch, Wine, ChefHat, Carrot, Beef, Baby, ShoppingCart, User } from "lucide-react";
+import { Zap, GitBranch, Wine, Utensils, ChefHat, Carrot, Beef, Baby, ShoppingCart, User } from "lucide-react";
 import OrderNode, { type NodeType } from "./OrderNode";
-import type { Order, SpritzOption, RisottoBase, Veggie, Protein } from "@/lib/types";
-import { spritzes, risottoBases, veggies, proteins } from "@/lib/data";
+import type { Order, SpritzOption, AppetizerOption, RisottoBase, Veggie, Protein } from "@/lib/types";
+import { spritzes, appetizers, risottoBases, veggies, proteins } from "@/lib/data";
 import { nodeHeights, NODE_GAP } from "@/lib/nodeConfig";
 
 const NODE_WIDTH = 300;
 
 interface OrderNodeData extends Record<string, unknown> {
-  type: "trigger" | "condition" | "spritz" | "base" | "veggies" | "proteins" | "kids" | "name" | "submit";
+  type: "trigger" | "condition" | "spritz" | "appetizer" | "base" | "veggies" | "proteins" | "kids" | "name" | "submit";
   order: Order;
   onMealTypeSelect?: (type: "grown-ups" | "kids") => void;
   onSpritzSelect?: (spritz: SpritzOption) => void;
+  onAppetizerSelect?: (appetizer: AppetizerOption) => void;
   onBaseSelect?: (base: RisottoBase) => void;
   onVeggieToggle?: (veggie: Veggie) => void;
   onProteinToggle?: (protein: Protein) => void;
@@ -60,36 +61,22 @@ function ConditionNodeContent({
         onClick={() => onMealTypeSelect("grown-ups")}
         className={`w-full text-left p-2 rounded-sm border transition-all ${
           order.mealType === "grown-ups"
-            ? "border-blue-600 bg-blue-50"
+            ? "border-blue-600 bg-blue-50 text-blue-600"
             : "border-[#e5e5e5] hover:border-blue-600"
         }`}
       >
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Grown-ups</span>
-          {order.mealType === "grown-ups" && (
-            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          )}
-        </div>
+        <span className="text-sm font-medium">Grown-ups</span>
       </button>
       <button
         type="button"
         onClick={() => onMealTypeSelect("kids")}
         className={`w-full text-left p-2 rounded-sm border transition-all ${
           order.mealType === "kids"
-            ? "border-blue-600 bg-blue-50"
+            ? "border-blue-600 bg-blue-50 text-blue-600"
             : "border-[#e5e5e5] hover:border-blue-600"
         }`}
       >
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Kids</span>
-          {order.mealType === "kids" && (
-            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          )}
-        </div>
+        <span className="text-sm font-medium">Kids</span>
       </button>
     </div>
   );
@@ -130,6 +117,36 @@ function SpritzNodeContent({
   );
 }
 
+function AppetizerNodeContent({
+  order,
+  onAppetizerSelect,
+}: {
+  order: Order;
+  onAppetizerSelect: (appetizer: AppetizerOption) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      {appetizers.map((appetizer) => {
+        const isSelected = order.appetizer?.id === appetizer.id;
+        return (
+          <button
+            key={appetizer.id}
+            type="button"
+            onClick={() => onAppetizerSelect(appetizer)}
+            className={`w-full text-left px-3 py-1.5 rounded-sm border text-xs transition-all ${
+              isSelected
+                ? "border-pink-600 bg-pink-50 text-pink-600"
+                : "border-[#e5e5e5] hover:border-pink-600"
+            }`}
+          >
+            {appetizer.name}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function BaseNodeContent({
   order,
   onBaseSelect,
@@ -148,18 +165,11 @@ function BaseNodeContent({
             onClick={() => onBaseSelect(base)}
             className={`w-full text-left p-2 rounded-sm border transition-all ${
               isSelected
-                ? "border-cyan-600 bg-cyan-50"
+                ? "border-cyan-600 bg-cyan-50 text-cyan-600"
                 : "border-[#e5e5e5] hover:border-cyan-600"
             }`}
           >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{base.name}</span>
-              {isSelected && (
-                <svg className="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-            </div>
+            <span className="text-sm font-medium">{base.name}</span>
           </button>
         );
       })}
@@ -251,18 +261,11 @@ function KidsNodeContent({
         onClick={() => onKidsMealSelect(!order.kidsMeal)}
         className={`w-full text-left p-2 rounded-sm border transition-all ${
           order.kidsMeal
-            ? "border-green-600 bg-green-50"
+            ? "border-green-600 bg-green-50 text-green-600"
             : "border-[#e5e5e5] hover:border-green-600"
         }`}
       >
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Risotto frikandel & andalouse</span>
-          {order.kidsMeal && (
-            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          )}
-        </div>
+        <span className="text-sm font-medium">Risotto frikandel & andalouse</span>
       </button>
     </div>
   );
@@ -323,6 +326,7 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
     (data.type === "trigger") ||
     (data.type === "condition" && !!data.order.mealType) ||
     (data.type === "spritz" && !!data.order.spritz) ||
+    (data.type === "appetizer" && !!data.order.appetizer) ||
     (data.type === "base" && !!data.order.base) ||
     (data.type === "veggies" && data.order.veggies.length > 0) ||
     (data.type === "proteins" && data.order.proteins.length > 0) ||
@@ -334,7 +338,8 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
     (data.type === "trigger") ||
     (data.type === "condition" && !data.order.mealType) ||
     (data.type === "spritz" && data.order.mealType === "grown-ups" && !data.order.spritz) ||
-    (data.type === "base" && data.order.mealType === "grown-ups" && !!data.order.spritz && !data.order.base) ||
+    (data.type === "appetizer" && data.order.mealType === "grown-ups" && !!data.order.spritz && !data.order.appetizer) ||
+    (data.type === "base" && data.order.mealType === "grown-ups" && !!data.order.appetizer && !data.order.base) ||
     (data.type === "veggies" && data.order.mealType === "grown-ups" && !!data.order.base && data.order.veggies.length === 0) ||
     (data.type === "proteins" && data.order.mealType === "grown-ups" && !!data.order.base && data.order.veggies.length > 0 && data.order.proteins.length === 0) ||
     (data.type === "kids" && data.order.mealType === "kids" && !data.order.kidsMeal) ||
@@ -349,6 +354,8 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
         return <GitBranch size={15} className="text-blue-600" />;
       case "spritz":
         return <Wine size={15} className="text-orange-600" />;
+      case "appetizer":
+        return <Utensils size={15} className="text-pink-600" />;
       case "base":
         return <ChefHat size={15} className="text-cyan-600" />;
       case "veggies":
@@ -372,6 +379,8 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
         return "Grown-ups or Kids";
       case "spritz":
         return "Choose your spritz";
+      case "appetizer":
+        return "Choose your appetizer";
       case "base":
         return "Choose your risotto base";
       case "veggies":
@@ -395,6 +404,8 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
         return <ConditionNodeContent order={data.order} onMealTypeSelect={data.onMealTypeSelect!} />;
       case "spritz":
         return <SpritzNodeContent order={data.order} onSpritzSelect={data.onSpritzSelect!} />;
+      case "appetizer":
+        return <AppetizerNodeContent order={data.order} onAppetizerSelect={data.onAppetizerSelect!} />;
       case "base":
         return <BaseNodeContent order={data.order} onBaseSelect={data.onBaseSelect!} />;
       case "veggies":
@@ -471,6 +482,10 @@ export default function OrderFlow() {
 
   const handleSpritzSelect = useCallback((spritz: SpritzOption) => {
     setOrder((prev) => ({ ...prev, spritz }));
+  }, []);
+
+  const handleAppetizerSelect = useCallback((appetizer: AppetizerOption) => {
+    setOrder((prev) => ({ ...prev, appetizer }));
   }, []);
 
   const handleBaseSelect = useCallback((base: RisottoBase) => {
@@ -556,8 +571,10 @@ export default function OrderFlow() {
         return true; // Trigger is always completed
       case "spritz":
         return order.mealType === "grown-ups";
-      case "base":
+      case "appetizer":
         return order.mealType === "grown-ups" && !!order.spritz;
+      case "base":
+        return order.mealType === "grown-ups" && !!order.appetizer;
       case "veggies":
         return order.mealType === "grown-ups" && !!order.base;
       case "proteins":
@@ -596,6 +613,7 @@ export default function OrderFlow() {
     
     if (order.mealType === "grown-ups") {
       if (shouldShowNode("spritz")) nodeOrder.push("spritz");
+      if (shouldShowNode("appetizer")) nodeOrder.push("appetizer");
       if (shouldShowNode("base")) nodeOrder.push("base");
       if (shouldShowNode("veggies")) nodeOrder.push("veggies");
       if (shouldShowNode("proteins")) nodeOrder.push("proteins");
@@ -624,6 +642,7 @@ export default function OrderFlow() {
       order,
       onMealTypeSelect: handleMealTypeSelect,
       onSpritzSelect: handleSpritzSelect,
+      onAppetizerSelect: handleAppetizerSelect,
       onBaseSelect: handleBaseSelect,
       onVeggieToggle: handleVeggieToggle,
       onProteinToggle: handleProteinToggle,
@@ -666,6 +685,18 @@ export default function OrderFlow() {
           position: { x: 0, y: nodePositions.spritz ?? 0 },
           data: {
             type: "spritz",
+            ...baseNodeData,
+          },
+        });
+      }
+
+      if (shouldShowNode("appetizer")) {
+        nodes.push({
+          id: "appetizer",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.appetizer ?? 0 },
+          data: {
+            type: "appetizer",
             ...baseNodeData,
           },
         });
@@ -727,7 +758,7 @@ export default function OrderFlow() {
           data: {
             type: "submit",
             order,
-            canOrder: !!order.spritz && !!order.base && order.veggies.length > 0 && order.proteins.length > 0 && !!order.name?.trim(),
+            canOrder: !!order.spritz && !!order.appetizer && !!order.base && order.veggies.length > 0 && order.proteins.length > 0 && !!order.name?.trim(),
             onSubmitOrder: handleOrder,
           },
         });
@@ -775,7 +806,7 @@ export default function OrderFlow() {
     }
 
     return nodes;
-  }, [order, handleMealTypeSelect, handleSpritzSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, handleNameChange, handleOrder, nodePositions, shouldShowNode]);
+  }, [order, handleMealTypeSelect, handleSpritzSelect, handleAppetizerSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, handleNameChange, handleOrder, nodePositions, shouldShowNode]);
 
   const initialEdges: Edge[] = useMemo(() => {
     const edges: Edge[] = [];
@@ -789,8 +820,11 @@ export default function OrderFlow() {
       if (shouldShowNode("condition") && shouldShowNode("spritz")) {
         edges.push({ id: "e-condition-spritz", source: "condition", target: "spritz", type: "smoothstep" });
       }
-      if (shouldShowNode("spritz") && shouldShowNode("base")) {
-        edges.push({ id: "e-spritz-base", source: "spritz", target: "base", type: "smoothstep" });
+      if (shouldShowNode("spritz") && shouldShowNode("appetizer")) {
+        edges.push({ id: "e-spritz-appetizer", source: "spritz", target: "appetizer", type: "smoothstep" });
+      }
+      if (shouldShowNode("appetizer") && shouldShowNode("base")) {
+        edges.push({ id: "e-appetizer-base", source: "appetizer", target: "base", type: "smoothstep" });
       }
       if (shouldShowNode("base") && shouldShowNode("veggies")) {
         edges.push({ id: "e-base-veggies", source: "base", target: "veggies", type: "smoothstep" });
@@ -837,6 +871,7 @@ export default function OrderFlow() {
       order,
       onMealTypeSelect: handleMealTypeSelect,
       onSpritzSelect: handleSpritzSelect,
+      onAppetizerSelect: handleAppetizerSelect,
       onBaseSelect: handleBaseSelect,
       onVeggieToggle: handleVeggieToggle,
       onProteinToggle: handleProteinToggle,
@@ -881,6 +916,18 @@ export default function OrderFlow() {
           position: { x: 0, y: positions.spritz ?? 0 },
           data: {
             type: "spritz",
+            ...baseNodeData,
+          },
+        });
+      }
+
+      if (shouldShowNode("appetizer")) {
+        newNodes.push({
+          id: "appetizer",
+          type: "orderNode",
+          position: { x: 0, y: positions.appetizer ?? 0 },
+          data: {
+            type: "appetizer",
             ...baseNodeData,
           },
         });
@@ -990,7 +1037,7 @@ export default function OrderFlow() {
     }
 
     setNodes(newNodes);
-  }, [order, setNodes, calculateNodePositions, shouldShowNode, handleMealTypeSelect, handleSpritzSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, handleNameChange, handleOrder]);
+  }, [order, setNodes, calculateNodePositions, shouldShowNode, handleMealTypeSelect, handleSpritzSelect, handleAppetizerSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, handleNameChange, handleOrder]);
 
   // Update edges when order changes - only create edges for nodes that exist
   React.useEffect(() => {
@@ -1005,8 +1052,11 @@ export default function OrderFlow() {
       if (shouldShowNode("condition") && shouldShowNode("spritz")) {
         newEdges.push({ id: "e-condition-spritz", source: "condition", target: "spritz", type: "smoothstep" });
       }
-      if (shouldShowNode("spritz") && shouldShowNode("base")) {
-        newEdges.push({ id: "e-spritz-base", source: "spritz", target: "base", type: "smoothstep" });
+      if (shouldShowNode("spritz") && shouldShowNode("appetizer")) {
+        newEdges.push({ id: "e-spritz-appetizer", source: "spritz", target: "appetizer", type: "smoothstep" });
+      }
+      if (shouldShowNode("appetizer") && shouldShowNode("base")) {
+        newEdges.push({ id: "e-appetizer-base", source: "appetizer", target: "base", type: "smoothstep" });
       }
       if (shouldShowNode("base") && shouldShowNode("veggies")) {
         newEdges.push({ id: "e-base-veggies", source: "base", target: "veggies", type: "smoothstep" });

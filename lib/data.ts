@@ -1,4 +1,4 @@
-import { Dish, SpritzOption, RisottoBase, Veggie, Protein } from "./types";
+import { Dish, SpritzOption, AppetizerOption, RisottoBase, Veggie, Protein } from "./types";
 
 export const favorites: Dish[] = [
   {
@@ -49,6 +49,19 @@ export const spritzes: SpritzOption[] = [
     id: "no-spritz",
     name: "No spritz",
     description: "No spritz",
+  },
+];
+
+export const appetizers: AppetizerOption[] = [
+  {
+    id: "panino-caprese-con-carne",
+    name: "panino ITP (caprese con prosciutto)",
+    description: "Panino IPT con prosciutto",
+  },
+  {
+    id: "panino-caprese-sin-carne",
+    name: "panino ITP (caprese vegetariano)",
+    description: "Panino ITP vegano",
   },
 ];
 

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const NODE_WIDTH = 300;
 const MIN_NODE_HEIGHT = 90;
 
-type NodeType = "trigger" | "condition" | "action" | "spritz" | "base" | "veggies" | "proteins" | "kids" | "name" | "submit";
+type NodeType = "trigger" | "condition" | "action" | "spritz" | "appetizer" | "base" | "veggies" | "proteins" | "kids" | "name" | "submit";
 
 type ContainerProps = {
   children: ReactNode;
@@ -38,6 +38,9 @@ function Container({
     if (nodeType === "spritz") {
       return isActive || isCompleted ? "border-orange-600" : "border-[#e5e5e5]";
     }
+    if (nodeType === "appetizer") {
+      return isActive || isCompleted ? "border-pink-600" : "border-[#e5e5e5]";
+    }
     if (nodeType === "base") {
       return isActive || isCompleted ? "border-cyan-600" : "border-[#e5e5e5]";
     }
@@ -64,6 +67,7 @@ function Container({
       if (nodeType === "trigger") return "border-red-600/40";
       if (nodeType === "condition") return "border-blue-600/40";
       if (nodeType === "spritz") return "border-orange-600/40";
+      if (nodeType === "appetizer") return "border-pink-600/40";
       if (nodeType === "base") return "border-cyan-600/40";
       if (nodeType === "veggies") return "border-green-600/40";
       if (nodeType === "proteins") return "border-orange-600/40";
@@ -80,6 +84,7 @@ function Container({
       if (nodeType === "trigger") return "bg-red-300";
       if (nodeType === "condition") return "bg-blue-300";
       if (nodeType === "spritz") return "bg-orange-300";
+      if (nodeType === "appetizer") return "bg-pink-300";
       if (nodeType === "base") return "bg-cyan-300";
       if (nodeType === "veggies") return "bg-green-300";
       if (nodeType === "proteins") return "bg-orange-300";
@@ -130,6 +135,7 @@ const Icon = memo(function Icon({ icon, nodeType = "action" }: IconProps) {
     if (nodeType === "trigger") return "bg-red-600/10";
     if (nodeType === "condition") return "bg-blue-600/10";
     if (nodeType === "spritz") return "bg-orange-600/10";
+    if (nodeType === "appetizer") return "bg-pink-600/10";
     if (nodeType === "base") return "bg-cyan-600/10";
     if (nodeType === "veggies") return "bg-green-600/10";
     if (nodeType === "proteins") return "bg-orange-600/10";
@@ -141,6 +147,7 @@ const Icon = memo(function Icon({ icon, nodeType = "action" }: IconProps) {
     if (nodeType === "trigger") return "text-red-600";
     if (nodeType === "condition") return "text-blue-600";
     if (nodeType === "spritz") return "text-orange-600";
+    if (nodeType === "appetizer") return "text-pink-600";
     if (nodeType === "base") return "text-cyan-600";
     if (nodeType === "veggies") return "text-green-600";
     if (nodeType === "proteins") return "text-orange-600";
@@ -179,6 +186,8 @@ function StatusIndicator({ isCompleted, isActive, nodeType = "action" }: StatusI
           ? "bg-blue-600/20"
           : nodeType === "spritz"
             ? "bg-orange-600/20"
+            : nodeType === "appetizer"
+            ? "bg-pink-600/20"
             : nodeType === "base"
             ? "bg-cyan-600/20"
             : nodeType === "veggies"
@@ -197,6 +206,8 @@ function StatusIndicator({ isCompleted, isActive, nodeType = "action" }: StatusI
           ? "stroke-blue-600"
           : nodeType === "spritz"
             ? "stroke-orange-600"
+            : nodeType === "appetizer"
+            ? "stroke-pink-600"
             : nodeType === "base"
             ? "stroke-cyan-600"
             : nodeType === "veggies"
@@ -226,6 +237,8 @@ function StatusIndicator({ isCompleted, isActive, nodeType = "action" }: StatusI
           ? "border-blue-600"
           : nodeType === "spritz"
             ? "border-orange-600"
+            : nodeType === "appetizer"
+            ? "border-pink-600"
             : nodeType === "base"
             ? "border-cyan-600"
             : nodeType === "veggies"
