@@ -25,13 +25,13 @@ export default function Button({
 
   const variantStyles = {
     primary:
-      "bg-[#FFC107] text-[#1a1a1a] hover:bg-[#FFB300] hover:shadow-lg active:scale-95 focus:ring-[#FFC107] shadow-md",
+      "bg-[#FFC107] text-[#4d0629] hover:bg-[#FFB300] hover:shadow-lg active:scale-95 focus:ring-[#FFC107] shadow-md",
     secondary:
-      "bg-white text-[#1a1a1a] border-2 border-[#1a1a1a] hover:bg-[#f5f5f5] hover:shadow-lg active:scale-95 focus:ring-[#1a1a1a]",
+      "bg-white text-[#4d0629] border-2 border-[#4d0629] hover:bg-[#f5f5f5] hover:shadow-lg active:scale-95 focus:ring-[#4d0629]",
     coral:
-      "bg-[#FFC107] text-[#1a1a1a] hover:bg-[#FFB300] hover:shadow-lg active:scale-95 focus:ring-[#FFC107] shadow-md",
+      "bg-[#FFC107] text-[#4d0629] hover:bg-[#FFB300] hover:shadow-lg active:scale-95 focus:ring-[#FFC107] shadow-md",
     outline:
-      "bg-transparent text-[#1a1a1a] border-2 border-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white active:scale-95 focus:ring-[#1a1a1a]",
+      "bg-transparent text-[#4d0629] border-2 border-[#4d0629] hover:bg-[#4d0629] hover:text-white active:scale-95 focus:ring-[#4d0629]",
   };
 
   const combinedStyles = `${baseStyles} ${variantStyles[variant]} ${className}`;
