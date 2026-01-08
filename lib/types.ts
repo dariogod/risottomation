@@ -12,29 +12,31 @@ export interface SpritzOption {
   description?: string;
 }
 
-export interface AppetizerOption {
-  id: string;
-  name: string;
-  description?: string;
-}
-
 export interface RisottoBase {
   id: string;
   name: string;
   description?: string;
 }
 
-export interface Topping {
+export interface Veggie {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+export interface Protein {
   id: string;
   name: string;
   description?: string;
 }
 
 export interface Order {
+  mealType?: "grown-ups" | "kids";
   spritz?: SpritzOption;
-  appetizer?: AppetizerOption;
-  risottoBase?: RisottoBase;
-  toppings: Topping[];
+  base?: RisottoBase;
+  veggies: Veggie[];
+  proteins: Protein[];
+  kidsMeal?: boolean;
 }
 
 export interface OrderStep {

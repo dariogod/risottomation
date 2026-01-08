@@ -28,6 +28,8 @@ export default function ConfirmationPage() {
     );
   }
 
+  const isKidsMeal = order.mealType === "kids";
+
   return (
     <div className="min-h-screen bg-white py-20 px-4">
       <div className="max-w-2xl mx-auto">
@@ -61,7 +63,26 @@ export default function ConfirmationPage() {
           </h2>
 
           <div className="space-y-6">
-            {order.spritz && (
+            {order.mealType && (
+              <div className="border-b border-[#e5e5e5] pb-4">
+                <h3 className="text-sm font-medium text-[#999999] mb-1">
+                  Meal Type
+                </h3>
+                <p className="text-lg text-[#1a1a1a] capitalize">{order.mealType}</p>
+              </div>
+            )}
+
+            {isKidsMeal && order.kidsMeal && (
+              <div className="border-b border-[#e5e5e5] pb-4">
+                <h3 className="text-sm font-medium text-[#999999] mb-1">
+                  Kid's Meal
+                </h3>
+                <p className="text-lg text-[#1a1a1a]">Frikandel with andalouse</p>
+                <p className="text-sm text-green-600 mt-1">🎁 Free toy included!</p>
+              </div>
+            )}
+
+            {!isKidsMeal && order.spritz && (
               <div className="border-b border-[#e5e5e5] pb-4">
                 <h3 className="text-sm font-medium text-[#999999] mb-1">
                   Spritz
@@ -70,40 +91,45 @@ export default function ConfirmationPage() {
               </div>
             )}
 
-            {order.appetizer && (
-              <div className="border-b border-[#e5e5e5] pb-4">
-                <h3 className="text-sm font-medium text-[#999999] mb-1">
-                  Appetizer
-                </h3>
-                <p className="text-lg text-[#1a1a1a]">
-                  {order.appetizer.name}
-                </p>
-              </div>
-            )}
-
-            {order.risottoBase && (
+            {!isKidsMeal && order.base && (
               <div className="border-b border-[#e5e5e5] pb-4">
                 <h3 className="text-sm font-medium text-[#999999] mb-1">
                   Risotto Base
                 </h3>
-                <p className="text-lg text-[#1a1a1a]">
-                  {order.risottoBase.name}
-                </p>
+                <p className="text-lg text-[#1a1a1a]">{order.base.name}</p>
               </div>
             )}
 
-            {order.toppings.length > 0 && (
-              <div>
+            {!isKidsMeal && order.veggies.length > 0 && (
+              <div className="border-b border-[#e5e5e5] pb-4">
                 <h3 className="text-sm font-medium text-[#999999] mb-2">
-                  Toppings
+                  Veggies
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {order.toppings.map((topping) => (
+                  {order.veggies.map((veggie) => (
                     <span
-                      key={topping.id}
-                      className="px-3 py-1 bg-[#f0f7ff] text-[#0066cc] rounded-full text-sm"
+                      key={veggie.id}
+                      className="px-3 py-1 bg-green-50 text-green-600 rounded-full text-sm"
                     >
-                      {topping.name}
+                      {veggie.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {!isKidsMeal && order.proteins.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-[#999999] mb-2">
+                  Proteins
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {order.proteins.map((protein) => (
+                    <span
+                      key={protein.id}
+                      className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm"
+                    >
+                      {protein.name}
                     </span>
                   ))}
                 </div>
