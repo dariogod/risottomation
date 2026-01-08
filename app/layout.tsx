@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import Link from "next/link";
+import Header from "@/components/Header";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -13,18 +13,6 @@ export const metadata: Metadata = {
   title: "Risottomation - Fast food, but good.",
   description: "Create your own custom risotto bowl. Choose your spritz, appetizer, and compose your perfect risotto with our selection of bases and toppings.",
 };
-
-function Header() {
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#ffd159]/95 backdrop-blur-sm border-b border-yellow-200">
-      <div className="flex items-center justify-between px-4 py-4 max-w-7xl mx-auto">
-        <Link href="/" className="text-[#4d0629] text-2xl font-bold tracking-tight">
-          Risottomation
-        </Link>
-      </div>
-    </header>
-  );
-}
 
 export default function RootLayout({
   children,
