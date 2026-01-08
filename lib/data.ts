@@ -23,11 +23,6 @@ export const favorites: Dish[] = [
 
 export const spritzes: SpritzOption[] = [
   {
-    id: "aperol",
-    name: "Aperol Spritz",
-    description: "Aperol, prosecco, and soda water",
-  },
-  {
     id: "limoncello",
     name: "Limoncello Spritz",
     description: "Limoncello, prosecco, and soda water",
@@ -36,6 +31,16 @@ export const spritzes: SpritzOption[] = [
     id: "hugo",
     name: "Hugo Spritz",
     description: "Elderflower syrup, prosecco, mint, and lime",
+  },
+  {
+    id: "aperol",
+    name: "Aperol Spritz",
+    description: "Aperol, prosecco, and soda water",
+  },
+  {
+    id: "florence-machine",
+    name: "Florence and the Machine (Aperol 0.0)",
+    description: "Aperol 0.0, prosecco, and soda water",
   },
   {
     id: "no-spritz",

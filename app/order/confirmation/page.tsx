@@ -86,7 +86,7 @@ export default function ConfirmationPage() {
                 <h3 className="text-sm font-medium text-[#999999] mb-1">
                   Kid's Meal
                 </h3>
-                <p className="text-lg text-[#1a1a1a]">Risotto with frikandel & andalouse</p>
+                <p className="text-lg text-[#1a1a1a]">Risotto frikandel & andalouse</p>
                 <p className="text-sm text-green-600 mt-1">🎁 Free toy included!</p>
               </div>
             )}
