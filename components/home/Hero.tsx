@@ -4,65 +4,32 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-24 pb-32 bg-gradient-to-br from-[#FFEB3B] via-[#FFC107] to-[#FFB300] overflow-hidden summer-dot-pattern">
-      {/* Summer gradient overlay */}
-      <div className="absolute inset-0 summer-gradient-overlay" />
+    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-24 pb-32 overflow-hidden">
+      {/* Background image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/hero3.png"
+          alt="Three bowls of delicious risotto"
+          fill
+          className="object-cover object-[30%_center] md:object-center"
+          priority
+          sizes="100vw"
+        />
+      </div>
       
-      {/* Background decoration - bright summer circles */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#FF9800]/20 rounded-full blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl" />
+      {/* Overlay for text readability */}
+      <div className="absolute inset-0 bg-black/30 z-0" />
       
       <div className="relative z-10 w-full px-4 text-center fade-in-up">
         {/* Title */}
-        <h1 className="text-[clamp(2.5rem,12vw,6rem)] font-bold text-[#4d0629] mb-3 leading-tight tracking-tight px-2">
+        <h1 className="text-[clamp(2.5rem,12vw,6rem)] font-bold text-white mb-3 leading-tight tracking-tight px-2 drop-shadow-lg">
           Risottomation
         </h1>
         
         {/* Slogan */}
-        <p className="relative z-20 text-xl md:text-2xl lg:text-3xl font-medium text-[#4d0629] mb-2 md:mb-4 px-2">
+        <p className="relative z-20 text-xl md:text-2xl lg:text-3xl font-medium text-white mb-2 md:mb-4 px-2 drop-shadow-md">
           Automate the boring Risotto.
         </p>
-        
-        {/* Risotto bowl image */}
-        <div className="relative w-full float -mx-4 md:mx-auto md:w-auto -mt-16 md:-mt-36 z-0">
-          <div className="relative w-full aspect-square md:w-[650px] md:h-[650px] lg:w-[750px] lg:h-[750px] md:mx-auto">
-            <Image
-              src="/risotto-bowl-2.png"
-              alt="Delicious risotto bowl with pumpkin, mushrooms, chorizo, and seeds"
-              fill
-              className="object-contain drop-shadow-2xl"
-              priority
-              sizes="100vw"
-            />
-          </div>
-          
-          {/* Decorative elements around bowl */}
-          <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/40 rounded-full blur-sm hidden md:block" />
-          <div className="absolute -bottom-2 -left-6 w-20 h-20 bg-white/30 rounded-full blur-sm hidden md:block" />
-        </div>
-        
-        {/* Scroll down arrow */}
-        <div className="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 z-30 animate-bounce">
-          <a 
-            href="#video" 
-            className="inline-flex flex-col items-center text-[#4d0629] hover:text-[#4d0629]/80 transition-colors"
-            aria-label="Scroll to video"
-          >
-            <span className="sr-only">Scroll to video</span>
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="w-8 h-8 md:w-10 md:h-10" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-              strokeWidth={2}
-              aria-hidden="true"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-          </a>
-        </div>
       </div>
       
       {/* Wave divider at bottom */}
