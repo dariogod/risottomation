@@ -59,6 +59,12 @@ a, button {
   outline-offset: 2px;
 }
 
+/* Override focus-visible for inputs to remove yellow border */
+input:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+
 /* Wave divider - bottom curve */
 .wave-divider {
   position: absolute;

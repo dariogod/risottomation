@@ -285,7 +285,8 @@ function NameNodeContent({
         value={order.name || ""}
         onChange={(e) => onNameChange(e.target.value)}
         placeholder="Enter your name"
-        className="w-full px-3 py-2 rounded-sm border border-[#e5e5e5] text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
+        autoComplete="off"
+        className="w-full px-3 py-2 rounded-sm border border-[#e5e5e5] text-sm outline-none focus:outline-none focus-visible:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
       />
     </div>
   );
