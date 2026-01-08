@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import Image from "next/image";
 import Button from "@/components/Button";
 import { favorites } from "@/lib/data";
 
@@ -44,23 +45,18 @@ function DishCard({ dish, index }: { dish: typeof favorites[0]; index: number })
         </div>
       )}
       
-      {/* Image placeholder */}
-      <div className="image-circle mx-auto mb-6">
-        <div className="text-center">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 100 100" 
-            className="w-20 h-20 mx-auto text-[#4d0629]/20"
-            fill="currentColor"
-          >
-            <ellipse cx="50" cy="55" rx="40" ry="25" />
-            <ellipse cx="50" cy="50" rx="40" ry="25" fill="none" stroke="currentColor" strokeWidth="3" />
-            <circle cx="35" cy="48" r="4" />
-            <circle cx="50" cy="45" r="5" />
-            <circle cx="65" cy="48" r="4" />
-          </svg>
+      {/* Dish image */}
+      {dish.image && (
+        <div className="image-circle mx-auto mb-6 overflow-hidden">
+          <Image
+            src={dish.image}
+            alt={dish.name}
+            width={180}
+            height={180}
+            className="w-full h-full object-cover"
+          />
         </div>
-      </div>
+      )}
       
       {/* Dish name */}
       <h3 className="text-2xl font-bold text-[#4d0629] text-center mb-4">
