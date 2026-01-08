@@ -42,6 +42,26 @@ export default function Hero() {
           <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/40 rounded-full blur-sm hidden md:block" />
           <div className="absolute -bottom-2 -left-6 w-20 h-20 bg-white/30 rounded-full blur-sm hidden md:block" />
         </div>
+        
+        {/* Scroll down arrow */}
+        <div className="relative z-10 mt-8 md:mt-12 animate-bounce">
+          <a 
+            href="#favorites" 
+            className="inline-flex flex-col items-center text-[#4d0629] hover:text-[#4d0629]/80 transition-colors"
+            aria-label="Scroll to favorites"
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="w-8 h-8 md:w-10 md:h-10" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </a>
+        </div>
       </div>
       
       {/* Wave divider at bottom */}
