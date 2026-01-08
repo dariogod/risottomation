@@ -20,7 +20,7 @@ import OrderNode from "./OrderNode";
 import type { Order, SpritzOption, AppetizerOption, RisottoBase, Topping } from "@/lib/types";
 import { spritzes, appetizers, risottoBases, toppings } from "@/lib/data";
 
-interface OrderNodeData {
+interface OrderNodeData extends Record<string, unknown> {
   type: "spritz" | "appetizer" | "risotto";
   order: Order;
   onSpritzSelect: (spritz: SpritzOption) => void;
@@ -289,12 +289,52 @@ export default function OrderFlow() {
     });
   }, []);
 
+  // Calculate dynamic node heights and positions
+  const calculateNodePositions = useCallback(() => {
+    const NODE_SPACING = 50; // Space between nodes
+    const BASE_HEIGHT = 90; // Minimum node height
+    const HEADER_HEIGHT = 50; // Header + separator height
+    const ITEM_HEIGHT = 40; // Height per item in lists
+    const PADDING = 16; // Content padding
+
+    let currentY = 0;
+
+    // Spritz node
+    const spritzItems = spritzes.length;
+    const spritzHeight = BASE_HEIGHT + HEADER_HEIGHT + (spritzItems * ITEM_HEIGHT) + PADDING;
+    const spritzY = currentY;
+    currentY += spritzHeight + NODE_SPACING;
+
+    // Appetizer node
+    const appetizerItems = order.spritz ? appetizers.length : 0;
+    const appetizerHeight = BASE_HEIGHT + HEADER_HEIGHT + (appetizerItems > 0 ? appetizerItems * ITEM_HEIGHT : 30) + PADDING;
+    const appetizerY = currentY;
+    currentY += appetizerHeight + NODE_SPACING;
+
+    // Risotto node
+    const risottoBaseItems = order.appetizer ? risottoBases.length : 0;
+    const risottoToppingsRows = order.appetizer ? Math.ceil(toppings.length / 4) : 0;
+    const risottoHeight = BASE_HEIGHT + HEADER_HEIGHT + 
+      (risottoBaseItems > 0 ? risottoBaseItems * ITEM_HEIGHT + 20 : 30) + // Base section
+      (risottoToppingsRows > 0 ? risottoToppingsRows * 30 + 20 : 0) + // Toppings section
+      PADDING;
+    const risottoY = currentY;
+
+    return {
+      spritz: { y: spritzY, height: spritzHeight },
+      appetizer: { y: appetizerY, height: appetizerHeight },
+      risotto: { y: risottoY, height: risottoHeight },
+    };
+  }, [order]);
+
+  const nodePositions = calculateNodePositions();
+
   const initialNodes: Node<OrderNodeData>[] = useMemo(
     () => [
       {
         id: "spritz",
         type: "orderNode",
-        position: { x: 0, y: 0 },
+        position: { x: 0, y: nodePositions.spritz.y },
         data: {
           type: "spritz",
           order,
@@ -307,7 +347,7 @@ export default function OrderFlow() {
       {
         id: "appetizer",
         type: "orderNode",
-        position: { x: 0, y: 250 },
+        position: { x: 0, y: nodePositions.appetizer.y },
         data: {
           type: "appetizer",
           order,
@@ -320,7 +360,7 @@ export default function OrderFlow() {
       {
         id: "risotto",
         type: "orderNode",
-        position: { x: 0, y: 500 },
+        position: { x: 0, y: nodePositions.risotto.y },
         data: {
           type: "risotto",
           order,
@@ -331,7 +371,7 @@ export default function OrderFlow() {
         },
       },
     ],
-    [order, handleSpritzSelect, handleAppetizerSelect, handleBaseSelect, handleToppingToggle]
+    [order, handleSpritzSelect, handleAppetizerSelect, handleBaseSelect, handleToppingToggle, nodePositions]
   );
 
   const initialEdges: Edge[] = useMemo(
@@ -345,18 +385,30 @@ export default function OrderFlow() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, , onEdgesChange] = useEdgesState(initialEdges);
 
-  // Update nodes when order changes
+  // Update nodes when order changes - recalculate positions
   React.useEffect(() => {
+    const positions = calculateNodePositions();
     setNodes((nds: Node<OrderNodeData>[]) =>
-      nds.map((node: Node<OrderNodeData>) => ({
-        ...node,
-        data: {
-          ...node.data,
-          order,
-        },
-      }))
+      nds.map((node: Node<OrderNodeData>) => {
+        let newY = node.position.y;
+        if (node.id === "spritz") {
+          newY = positions.spritz.y;
+        } else if (node.id === "appetizer") {
+          newY = positions.appetizer.y;
+        } else if (node.id === "risotto") {
+          newY = positions.risotto.y;
+        }
+        return {
+          ...node,
+          position: { ...node.position, y: newY },
+          data: {
+            ...node.data,
+            order,
+          },
+        };
+      })
     );
-  }, [order, setNodes]);
+  }, [order, setNodes, calculateNodePositions]);
 
   const handleOrder = () => {
     const orderData = JSON.stringify(order);

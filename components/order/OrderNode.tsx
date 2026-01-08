@@ -37,7 +37,7 @@ function Container({
         (selected || highlightNode) && "border-[#0066cc]",
         className
       )}
-      style={{ width: `${NODE_WIDTH}px`, minHeight: `${MIN_NODE_HEIGHT}px` }}
+      style={{ width: `${NODE_WIDTH}px`, minHeight: `${MIN_NODE_HEIGHT}px`, height: "auto" }}
     >
       {children}
       {selected && <div className="absolute -z-10 -inset-[2px] rounded-sm bg-[#0066cc]/20" />}
