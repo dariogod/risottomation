@@ -10,14 +10,14 @@ export const favorites: Dish[] = [
   },
   {
     id: "pitpat-risotto",
-    name: "The Pitpat Risotto",
+    name: "The Pit-Pat",
     description: "Dual-flavored contrast plate delivered with perfect balance. Contains earthy leek & truffle on one side, vibrant pumpkin & chorizo on the other, and zero middle ground.",
     allergens: ["Gluten"],
     image: "/pitpat.png",
   },
   {
     id: "gtm-shire",
-    name: "The GTM Shire",
+    name: "The Shire",
     description: "Comfort-driven sales classic straight from the GTM Shire. Built on a classic broth with earthy oyster mushrooms, sweet pumpkin, and crispy guanciale. Closing food deals has never looked this good.",
     allergens: ["Gluten"],
     image: "/sales.png",

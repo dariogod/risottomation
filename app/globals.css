@@ -124,6 +124,10 @@ input:focus-visible {
   -ms-overflow-style: none;
 }
 
+.scroll-snap-align-center {
+  scroll-snap-align: center;
+}
+
 .horizontal-scroll::-webkit-scrollbar {
   display: none;
 }
