@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const NODE_WIDTH = 300;
 const MIN_NODE_HEIGHT = 90;
 
-type NodeType = "trigger" | "condition" | "action";
+type NodeType = "trigger" | "condition" | "action" | "spritz" | "base" | "veggies" | "proteins" | "kids";
 
 type ContainerProps = {
   children: ReactNode;
@@ -33,7 +33,22 @@ function Container({
       return isActive || isCompleted ? "border-red-600" : "border-[#e5e5e5]";
     }
     if (nodeType === "condition") {
+      return isActive || isCompleted ? "border-blue-600" : "border-[#e5e5e5]";
+    }
+    if (nodeType === "spritz") {
       return isActive || isCompleted ? "border-orange-600" : "border-[#e5e5e5]";
+    }
+    if (nodeType === "base") {
+      return isActive || isCompleted ? "border-cyan-600" : "border-[#e5e5e5]";
+    }
+    if (nodeType === "veggies") {
+      return isActive || isCompleted ? "border-green-600" : "border-[#e5e5e5]";
+    }
+    if (nodeType === "proteins") {
+      return isActive || isCompleted ? "border-orange-600" : "border-[#e5e5e5]";
+    }
+    if (nodeType === "kids") {
+      return isActive || isCompleted ? "border-green-600" : "border-[#e5e5e5]";
     }
     return isActive || isCompleted ? "border-[#0066cc]" : "border-[#e5e5e5]";
   };
@@ -41,7 +56,12 @@ function Container({
   const getHoverBorder = () => {
     if (hovering && !selected && !highlightNode && !isCompleted) {
       if (nodeType === "trigger") return "border-red-600/40";
-      if (nodeType === "condition") return "border-orange-600/40";
+      if (nodeType === "condition") return "border-blue-600/40";
+      if (nodeType === "spritz") return "border-orange-600/40";
+      if (nodeType === "base") return "border-cyan-600/40";
+      if (nodeType === "veggies") return "border-green-600/40";
+      if (nodeType === "proteins") return "border-orange-600/40";
+      if (nodeType === "kids") return "border-green-600/40";
       return "border-[#0066cc]/40";
     }
     return "";
@@ -50,7 +70,12 @@ function Container({
   const getSelectedGradient = () => {
     if (selected) {
       if (nodeType === "trigger") return "bg-red-300";
-      if (nodeType === "condition") return "bg-orange-300";
+      if (nodeType === "condition") return "bg-blue-300";
+      if (nodeType === "spritz") return "bg-orange-300";
+      if (nodeType === "base") return "bg-cyan-300";
+      if (nodeType === "veggies") return "bg-green-300";
+      if (nodeType === "proteins") return "bg-orange-300";
+      if (nodeType === "kids") return "bg-green-300";
       return "bg-[#0066cc]/20";
     }
     return "";
@@ -94,13 +119,23 @@ type IconProps = {
 const Icon = memo(function Icon({ icon, nodeType = "action" }: IconProps) {
   const getBgColor = () => {
     if (nodeType === "trigger") return "bg-red-600/10";
-    if (nodeType === "condition") return "bg-orange-600/10";
+    if (nodeType === "condition") return "bg-blue-600/10";
+    if (nodeType === "spritz") return "bg-orange-600/10";
+    if (nodeType === "base") return "bg-cyan-600/10";
+    if (nodeType === "veggies") return "bg-green-600/10";
+    if (nodeType === "proteins") return "bg-orange-600/10";
+    if (nodeType === "kids") return "bg-green-600/10";
     return "bg-[#0066cc]/10";
   };
 
   const getIconColor = () => {
     if (nodeType === "trigger") return "text-red-600";
-    if (nodeType === "condition") return "text-orange-600";
+    if (nodeType === "condition") return "text-blue-600";
+    if (nodeType === "spritz") return "text-orange-600";
+    if (nodeType === "base") return "text-cyan-600";
+    if (nodeType === "veggies") return "text-green-600";
+    if (nodeType === "proteins") return "text-orange-600";
+    if (nodeType === "kids") return "text-green-600";
     return "text-[#0066cc]";
   };
 
@@ -131,14 +166,34 @@ function StatusIndicator({ isCompleted, isActive, nodeType = "action" }: StatusI
       nodeType === "trigger"
         ? "bg-red-600/20"
         : nodeType === "condition"
-          ? "bg-orange-600/20"
-          : "bg-[#0066cc]/20";
+          ? "bg-blue-600/20"
+          : nodeType === "spritz"
+            ? "bg-orange-600/20"
+            : nodeType === "base"
+            ? "bg-cyan-600/20"
+            : nodeType === "veggies"
+              ? "bg-green-600/20"
+              : nodeType === "proteins"
+                ? "bg-orange-600/20"
+                : nodeType === "kids"
+                  ? "bg-green-600/20"
+                  : "bg-[#0066cc]/20";
     const strokeColor =
       nodeType === "trigger"
         ? "stroke-red-600"
         : nodeType === "condition"
-          ? "stroke-orange-600"
-          : "stroke-[#0066cc]";
+          ? "stroke-blue-600"
+          : nodeType === "spritz"
+            ? "stroke-orange-600"
+            : nodeType === "base"
+            ? "stroke-cyan-600"
+            : nodeType === "veggies"
+              ? "stroke-green-600"
+              : nodeType === "proteins"
+                ? "stroke-orange-600"
+                : nodeType === "kids"
+                  ? "stroke-green-600"
+                  : "stroke-[#0066cc]";
 
     return (
       <div className="flex items-center justify-center relative w-5 h-5">
@@ -154,8 +209,18 @@ function StatusIndicator({ isCompleted, isActive, nodeType = "action" }: StatusI
       nodeType === "trigger"
         ? "border-red-600"
         : nodeType === "condition"
-          ? "border-orange-600"
-          : "border-[#0066cc]";
+          ? "border-blue-600"
+          : nodeType === "spritz"
+            ? "border-orange-600"
+            : nodeType === "base"
+            ? "border-cyan-600"
+            : nodeType === "veggies"
+              ? "border-green-600"
+              : nodeType === "proteins"
+                ? "border-orange-600"
+                : nodeType === "kids"
+                  ? "border-green-600"
+                  : "border-[#0066cc]";
 
     return (
       <div className="flex items-center justify-center w-5 h-5">

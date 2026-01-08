@@ -1,4 +1,4 @@
-import { Dish, RisottoBase, Veggie, Protein } from "./types";
+import { Dish, SpritzOption, RisottoBase, Veggie, Protein } from "./types";
 
 export const favorites: Dish[] = [
   {
@@ -48,6 +48,24 @@ export const favorites: Dish[] = [
     name: "Porcini Risotto",
     description: "Dried porcini mushrooms with garlic, white wine, and parmesan",
     allergens: ["Lactose", "Gluten"],
+  },
+];
+
+export const spritzes: SpritzOption[] = [
+  {
+    id: "aperol",
+    name: "Aperol Spritz",
+    description: "Aperol, prosecco, and soda water",
+  },
+  {
+    id: "limoncello",
+    name: "Limoncello Spritz",
+    description: "Limoncello, prosecco, and soda water",
+  },
+  {
+    id: "hugo",
+    name: "Hugo Spritz",
+    description: "Elderflower syrup, prosecco, mint, and lime",
   },
 ];
 
@@ -109,5 +127,7 @@ export const proteins: Protein[] = [
     description: "Guanciale",
   },
 ];
+
+
 
 
