@@ -12,21 +12,18 @@ import {
   useEdgesState,
   Handle,
   Position,
-  useUpdateNodeInternals,
-  useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Zap, GitBranch, Wine, ChefHat, Carrot, Beef, Baby } from "lucide-react";
-import Button from "@/components/Button";
+import { Zap, GitBranch, Wine, ChefHat, Carrot, Beef, Baby, ShoppingCart } from "lucide-react";
 import OrderNode, { type NodeType } from "./OrderNode";
 import type { Order, SpritzOption, RisottoBase, Veggie, Protein } from "@/lib/types";
 import { spritzes, risottoBases, veggies, proteins } from "@/lib/data";
+import { nodeHeights, NODE_GAP } from "@/lib/nodeConfig";
 
 const NODE_WIDTH = 300;
-const NODE_SPACING = 50;
 
 interface OrderNodeData extends Record<string, unknown> {
-  type: "trigger" | "condition" | "spritz" | "base" | "veggies" | "proteins" | "kids";
+  type: "trigger" | "condition" | "spritz" | "base" | "veggies" | "proteins" | "kids" | "submit";
   order: Order;
   onMealTypeSelect?: (type: "grown-ups" | "kids") => void;
   onSpritzSelect?: (spritz: SpritzOption) => void;
@@ -34,6 +31,8 @@ interface OrderNodeData extends Record<string, unknown> {
   onVeggieToggle?: (veggie: Veggie) => void;
   onProteinToggle?: (protein: Protein) => void;
   onKidsMealSelect?: (selected: boolean) => void;
+  onSubmitOrder?: () => void;
+  canOrder?: boolean;
 }
 
 function TriggerNodeContent() {
@@ -102,10 +101,6 @@ function SpritzNodeContent({
   order: Order;
   onSpritzSelect: (spritz: SpritzOption) => void;
 }) {
-  if (order.mealType !== "grown-ups") {
-    return <p className="text-[#999999] text-xs">Complete previous step first</p>;
-  }
-
   return (
     <div className="space-y-2">
       {spritzes.map((spritz) => {
@@ -143,10 +138,6 @@ function BaseNodeContent({
   order: Order;
   onBaseSelect: (base: RisottoBase) => void;
 }) {
-  if (order.mealType !== "grown-ups" || !order.spritz) {
-    return <p className="text-[#999999] text-xs">Complete previous step first</p>;
-  }
-
   return (
     <div className="space-y-2">
       {risottoBases.map((base) => {
@@ -184,23 +175,24 @@ function VeggiesNodeContent({
   order: Order;
   onVeggieToggle: (veggie: Veggie) => void;
 }) {
-  if (order.mealType !== "grown-ups" || !order.spritz || !order.base) {
-    return <p className="text-[#999999] text-xs">Complete previous step first</p>;
-  }
-
   return (
     <div className="flex flex-wrap gap-2">
       {veggies.map((veggie) => {
         const isSelected = order.veggies.some((v) => v.id === veggie.id);
+        const isNoneOption = veggie.id === "no-veggies";
         return (
           <button
             key={veggie.id}
             type="button"
             onClick={() => onVeggieToggle(veggie)}
             className={`px-3 py-1.5 rounded-sm border text-xs transition-all ${
-              isSelected
-                ? "border-green-600 bg-green-50 text-green-600"
-                : "border-[#e5e5e5] hover:border-green-600"
+              isNoneOption
+                ? isSelected
+                  ? "border-neutral-500 bg-neutral-100 text-neutral-600 border-dashed"
+                  : "border-dashed border-neutral-300 text-neutral-400 hover:border-neutral-400 hover:text-neutral-500"
+                : isSelected
+                  ? "border-green-600 bg-green-50 text-green-600"
+                  : "border-[#e5e5e5] hover:border-green-600"
             }`}
           >
             {veggie.name}
@@ -218,23 +210,24 @@ function ProteinsNodeContent({
   order: Order;
   onProteinToggle: (protein: Protein) => void;
 }) {
-  if (order.mealType !== "grown-ups" || !order.spritz || !order.base || order.veggies.length === 0) {
-    return <p className="text-[#999999] text-xs">Complete previous step first</p>;
-  }
-
   return (
     <div className="flex flex-wrap gap-2">
       {proteins.map((protein) => {
         const isSelected = order.proteins.some((p) => p.id === protein.id);
+        const isNoneOption = protein.id === "no-protein";
         return (
           <button
             key={protein.id}
             type="button"
             onClick={() => onProteinToggle(protein)}
             className={`px-3 py-1.5 rounded-sm border text-xs transition-all ${
-              isSelected
-                ? "border-orange-600 bg-orange-50 text-orange-600"
-                : "border-[#e5e5e5] hover:border-orange-600"
+              isNoneOption
+                ? isSelected
+                  ? "border-neutral-500 bg-neutral-100 text-neutral-600 border-dashed"
+                  : "border-dashed border-neutral-300 text-neutral-400 hover:border-neutral-400 hover:text-neutral-500"
+                : isSelected
+                  ? "border-orange-600 bg-orange-50 text-orange-600"
+                  : "border-[#e5e5e5] hover:border-orange-600"
             }`}
           >
             {protein.name}
@@ -252,10 +245,6 @@ function KidsNodeContent({
   order: Order;
   onKidsMealSelect: (selected: boolean) => void;
 }) {
-  if (order.mealType !== "kids") {
-    return <p className="text-[#999999] text-xs">Complete previous step first</p>;
-  }
-
   return (
     <div className="space-y-2">
       <button
@@ -280,6 +269,31 @@ function KidsNodeContent({
   );
 }
 
+function SubmitNodeContent({
+  canOrder,
+  onSubmitOrder,
+}: {
+  canOrder: boolean;
+  onSubmitOrder: () => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <button
+        type="button"
+        onClick={onSubmitOrder}
+        disabled={!canOrder}
+        className={`w-full text-center p-3 rounded-sm border transition-all font-medium ${
+          canOrder
+            ? "border-[#0066cc] bg-[#0066cc] text-white hover:bg-[#0052a3]"
+            : "border-[#e5e5e5] bg-[#f5f5f5] text-[#999999] cursor-not-allowed"
+        }`}
+      >
+        {canOrder ? "Place Order" : "Complete all steps first"}
+      </button>
+    </div>
+  );
+}
+
 function OrderNodeComponent({ data }: { data: OrderNodeData }) {
   const getNodeType = (): NodeType => {
     return data.type;
@@ -293,7 +307,8 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
     (data.type === "base" && !!data.order.base) ||
     (data.type === "veggies" && data.order.veggies.length > 0) ||
     (data.type === "proteins" && data.order.proteins.length > 0) ||
-    (data.type === "kids" && !!data.order.kidsMeal);
+    (data.type === "kids" && !!data.order.kidsMeal) ||
+    (data.type === "submit" && false); // Submit never shows as completed
 
   const isActive =
     (data.type === "trigger") ||
@@ -302,7 +317,8 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
     (data.type === "base" && data.order.mealType === "grown-ups" && !!data.order.spritz && !data.order.base) ||
     (data.type === "veggies" && data.order.mealType === "grown-ups" && !!data.order.base && data.order.veggies.length === 0) ||
     (data.type === "proteins" && data.order.mealType === "grown-ups" && !!data.order.base && data.order.veggies.length > 0 && data.order.proteins.length === 0) ||
-    (data.type === "kids" && data.order.mealType === "kids" && !data.order.kidsMeal);
+    (data.type === "kids" && data.order.mealType === "kids" && !data.order.kidsMeal) ||
+    (data.type === "submit" && !!data.canOrder);
 
   const getIcon = () => {
     switch (data.type) {
@@ -320,6 +336,8 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
         return <Beef size={15} className="text-orange-600" />;
       case "kids":
         return <Baby size={15} className="text-green-600" />;
+      case "submit":
+        return <ShoppingCart size={15} className="text-[#0066cc]" />;
     }
   };
 
@@ -332,13 +350,15 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
       case "spritz":
         return "Choose your spritz";
       case "base":
-        return "Step 1: Choose your base";
+        return "Choose your risotto base";
       case "veggies":
-        return "Step 2: Choose your veggies";
+        return "Choose your veggies";
       case "proteins":
-        return "Step 3: Choose your proteins";
+        return "Choose your proteins";
       case "kids":
-        return "Step 1: Kid's meal";
+        return "Kid's meal";
+      case "submit":
+        return "Place your order";
     }
   };
 
@@ -358,112 +378,58 @@ function OrderNodeComponent({ data }: { data: OrderNodeData }) {
         return <ProteinsNodeContent order={data.order} onProteinToggle={data.onProteinToggle!} />;
       case "kids":
         return <KidsNodeContent order={data.order} onKidsMealSelect={data.onKidsMealSelect!} />;
+      case "submit":
+        return <SubmitNodeContent canOrder={!!data.canOrder} onSubmitOrder={data.onSubmitOrder!} />;
     }
   };
 
   const showTargetHandle = data.type !== "trigger";
-  const showSourceHandle = data.type !== "kids" && data.type !== "proteins";
+  // All nodes except submit (which is always last) need a source handle
+  const showSourceHandle = data.type !== "submit";
 
   return (
-    <>
+    <div className="relative">
       {showTargetHandle && (
-        <Handle type="target" position={Position.Top} className="!bg-[#0066cc] !w-1 !h-1" />
+        <Handle 
+          type="target" 
+          position={Position.Top} 
+          className="w-3 h-3 rounded-full border-2 border-white bg-[#0066cc]"
+          isConnectable={false}
+        />
       )}
-      <OrderNode.Wrapper>
-        <OrderNode.Container
-          selected={false}
-          hovering={false}
-          highlightNode={isActive}
-          isCompleted={isCompleted}
-          isActive={isActive}
-          nodeType={nodeType}
-        >
-          <OrderNode.Header>
-            <OrderNode.Icon icon={getIcon()} nodeType={nodeType} />
-            <div className="flex items-center justify-between h-10 w-full">
-              <OrderNode.Title name={getTitle()} />
-              <OrderNode.StatusIndicator isCompleted={isCompleted} isActive={isActive} nodeType={nodeType} />
-            </div>
-          </OrderNode.Header>
-          <OrderNode.Separator />
-          <OrderNode.Content>{renderContent()}</OrderNode.Content>
-        </OrderNode.Container>
-      </OrderNode.Wrapper>
+      <OrderNode.Container
+        selected={false}
+        hovering={false}
+        highlightNode={isActive}
+        isCompleted={isCompleted}
+        isActive={isActive}
+        nodeType={nodeType}
+      >
+        <OrderNode.Header>
+          <OrderNode.Icon icon={getIcon()} nodeType={nodeType} />
+          <div className="flex items-center justify-between h-10 w-full">
+            <OrderNode.Title name={getTitle()} />
+            <OrderNode.StatusIndicator isCompleted={isCompleted} isActive={isActive} nodeType={nodeType} />
+          </div>
+        </OrderNode.Header>
+        <OrderNode.Separator />
+        <OrderNode.Content>{renderContent()}</OrderNode.Content>
+      </OrderNode.Container>
       {showSourceHandle && (
-        <Handle type="source" position={Position.Bottom} className="!bg-[#0066cc] !w-1 !h-1" />
+        <Handle 
+          type="source" 
+          position={Position.Bottom} 
+          className="w-3 h-3 rounded-full border-2 border-white bg-[#0066cc]"
+          isConnectable={false}
+        />
       )}
-    </>
+    </div>
   );
 }
 
 const nodeTypes = {
   orderNode: OrderNodeComponent,
 };
-
-// Component that uses ReactFlow hooks - must be inside ReactFlow tree
-function NodePositionUpdater({
-  order,
-  calculateNodePositions,
-  setNodes,
-}: {
-  order: Order;
-  calculateNodePositions: (nodes: Node<OrderNodeData>[]) => Record<string, number>;
-  setNodes: (nodes: Node<OrderNodeData>[] | ((nodes: Node<OrderNodeData>[]) => Node<OrderNodeData>[])) => void;
-}) {
-  const updateNodeInternals = useUpdateNodeInternals();
-  const { getNodes } = useReactFlow();
-  const prevHeightsRef = React.useRef<Record<string, number>>({});
-
-  // Update positions when nodes are measured (height changes)
-  React.useEffect(() => {
-    const currentNodes = getNodes() as Node<OrderNodeData>[];
-    if (currentNodes.length === 0) return;
-    
-    // Check if any node has been measured
-    const hasMeasuredNodes = currentNodes.some((n) => n.measured?.height);
-    if (!hasMeasuredNodes) return;
-
-    // Check if any node height actually changed
-    let heightChanged = false;
-    const currentHeights: Record<string, number> = {};
-    
-    currentNodes.forEach((node) => {
-      const height = node.measured?.height || 0;
-      currentHeights[node.id] = height;
-      const prevHeight = prevHeightsRef.current[node.id] || 0;
-      if (Math.abs(height - prevHeight) > 1) {
-        heightChanged = true;
-      }
-    });
-
-    // Only recalculate if heights actually changed
-    if (!heightChanged && Object.keys(prevHeightsRef.current).length > 0) {
-      return;
-    }
-
-    // Update ref with current heights
-    prevHeightsRef.current = currentHeights;
-
-    const positions = calculateNodePositions(currentNodes);
-    
-    // Only update if positions actually changed
-    let needsUpdate = false;
-    const updatedNodes = currentNodes.map((node) => {
-      const newY = positions[node.id];
-      if (newY !== undefined && Math.abs(node.position.y - newY) > 1) {
-        needsUpdate = true;
-        return { ...node, position: { x: node.position.x, y: newY } };
-      }
-      return node;
-    });
-
-    if (needsUpdate) {
-      setNodes(updatedNodes);
-    }
-  }, [order, getNodes, calculateNodePositions, setNodes]);
-
-  return null;
-}
 
 export default function OrderFlow() {
   const router = useRouter();
@@ -487,11 +453,27 @@ export default function OrderFlow() {
   const handleVeggieToggle = useCallback((veggie: Veggie) => {
     setOrder((prev) => {
       const isSelected = prev.veggies.some((v) => v.id === veggie.id);
+      
+      // If already selected, just deselect it
+      if (isSelected) {
+        return {
+          ...prev,
+          veggies: prev.veggies.filter((v) => v.id !== veggie.id),
+        };
+      }
+      
+      // If selecting "no veggies", clear all others
+      if (veggie.id === "no-veggies") {
+        return {
+          ...prev,
+          veggies: [veggie],
+        };
+      }
+      
+      // If selecting a regular veggie, remove "no veggies" if present and add the new one
       return {
         ...prev,
-        veggies: isSelected
-          ? prev.veggies.filter((v) => v.id !== veggie.id)
-          : [...prev.veggies, veggie],
+        veggies: [...prev.veggies.filter((v) => v.id !== "no-veggies"), veggie],
       };
     });
   }, []);
@@ -499,11 +481,27 @@ export default function OrderFlow() {
   const handleProteinToggle = useCallback((protein: Protein) => {
     setOrder((prev) => {
       const isSelected = prev.proteins.some((p) => p.id === protein.id);
+      
+      // If already selected, just deselect it
+      if (isSelected) {
+        return {
+          ...prev,
+          proteins: prev.proteins.filter((p) => p.id !== protein.id),
+        };
+      }
+      
+      // If selecting "no protein", clear all others
+      if (protein.id === "no-protein") {
+        return {
+          ...prev,
+          proteins: [protein],
+        };
+      }
+      
+      // If selecting a regular protein, remove "no protein" if present and add the new one
       return {
         ...prev,
-        proteins: isSelected
-          ? prev.proteins.filter((p) => p.id !== protein.id)
-          : [...prev.proteins, protein],
+        proteins: [...prev.proteins.filter((p) => p.id !== "no-protein"), protein],
       };
     });
   }, []);
@@ -512,215 +510,243 @@ export default function OrderFlow() {
     setOrder((prev) => ({ ...prev, kidsMeal: selected }));
   }, []);
 
-  // Calculate node positions dynamically based on actual measured heights
-  const calculateNodePositions = useCallback((currentNodes: Node<OrderNodeData>[]) => {
-    let currentY = 0;
-    const positions: Record<string, number> = {};
-    const nodeMap = new Map(currentNodes.map((n) => [n.id, n]));
+  const handleOrder = useCallback(() => {
+    const orderData = JSON.stringify(order);
+    sessionStorage.setItem("order", orderData);
+    router.push("/order/confirmation");
+  }, [order, router]);
 
-    // Helper to get node height (use measured height if available, otherwise estimate)
-    const getNodeHeight = (nodeId: string, defaultHeight: number): number => {
-      const node = nodeMap.get(nodeId);
-      if (node?.measured?.height) {
-        return node.measured.height;
-      }
-      return defaultHeight;
-    };
-
-    // Trigger
-    positions.trigger = currentY;
-    currentY += getNodeHeight("trigger", 90) + NODE_SPACING;
-
-    // Condition
-    positions.condition = currentY;
-    currentY += getNodeHeight("condition", 120) + NODE_SPACING;
-
-    if (order.mealType === "grown-ups") {
-      // Spritz
-      positions.spritz = currentY;
-      currentY += getNodeHeight("spritz", 150) + NODE_SPACING;
-      // Base
-      positions.base = currentY;
-      currentY += getNodeHeight("base", 150) + NODE_SPACING;
-      // Veggies
-      positions.veggies = currentY;
-      currentY += getNodeHeight("veggies", 120) + NODE_SPACING;
-      // Proteins
-      positions.proteins = currentY;
-      // No spacing after last node
-    } else if (order.mealType === "kids") {
-      // Kids meal
-      positions.kids = currentY;
-      // No spacing after last node
+  // Helper function to determine if a node should be shown
+  const shouldShowNode = useCallback((nodeId: string): boolean => {
+    switch (nodeId) {
+      case "trigger":
+        return true; // Always shown
+      case "condition":
+        return true; // Trigger is always completed
+      case "spritz":
+        return order.mealType === "grown-ups";
+      case "base":
+        return order.mealType === "grown-ups" && !!order.spritz;
+      case "veggies":
+        return order.mealType === "grown-ups" && !!order.base;
+      case "proteins":
+        return order.mealType === "grown-ups" && order.veggies.length > 0;
+      case "kids":
+        return order.mealType === "kids";
+      case "submit":
+        if (order.mealType === "grown-ups") {
+          return order.proteins.length > 0;
+        } else if (order.mealType === "kids") {
+          return !!order.kidsMeal;
+        }
+        return false;
+      default:
+        return false;
     }
-
-    return positions;
   }, [order]);
 
-  // Get initial positions (will be recalculated when nodes are measured)
-  const getInitialPositions = useCallback(() => {
-    // Use default heights for initial positioning
-    let currentY = 0;
+  // Calculate node positions using configured heights from nodeConfig.ts
+  const calculateNodePositions = useCallback(() => {
     const positions: Record<string, number> = {};
+    let currentY = 0;
     
-    positions.trigger = currentY;
-    currentY += 90 + NODE_SPACING;
+    // Build list of nodes that will exist
+    const nodeOrder: string[] = [];
     
-    positions.condition = currentY;
-    currentY += 120 + NODE_SPACING;
+    if (shouldShowNode("trigger")) nodeOrder.push("trigger");
+    if (shouldShowNode("condition")) nodeOrder.push("condition");
     
     if (order.mealType === "grown-ups") {
-      positions.spritz = currentY;
-      currentY += 150 + NODE_SPACING;
-      positions.base = currentY;
-      currentY += 150 + NODE_SPACING;
-      positions.veggies = currentY;
-      currentY += 120 + NODE_SPACING;
-      positions.proteins = currentY;
+      if (shouldShowNode("spritz")) nodeOrder.push("spritz");
+      if (shouldShowNode("base")) nodeOrder.push("base");
+      if (shouldShowNode("veggies")) nodeOrder.push("veggies");
+      if (shouldShowNode("proteins")) nodeOrder.push("proteins");
+      if (shouldShowNode("submit")) nodeOrder.push("submit");
     } else if (order.mealType === "kids") {
-      positions.kids = currentY;
+      if (shouldShowNode("kids")) nodeOrder.push("kids");
+      if (shouldShowNode("submit")) nodeOrder.push("submit");
     }
+
+    // Use heights from nodeConfig.ts
+    nodeOrder.forEach((nodeId) => {
+      positions[nodeId] = currentY;
+      currentY += (nodeHeights[nodeId] || 100) + NODE_GAP;
+    });
     
     return positions;
-  }, [order]);
+  }, [order, shouldShowNode]);
 
-  const nodePositions = getInitialPositions();
+  const nodePositions = calculateNodePositions();
 
   const initialNodes: Node<OrderNodeData>[] = useMemo(() => {
-    const nodes: Node<OrderNodeData>[] = [
-      {
+    const nodes: Node<OrderNodeData>[] = [];
+    const baseNodeData = {
+      order,
+      onMealTypeSelect: handleMealTypeSelect,
+      onSpritzSelect: handleSpritzSelect,
+      onBaseSelect: handleBaseSelect,
+      onVeggieToggle: handleVeggieToggle,
+      onProteinToggle: handleProteinToggle,
+      onKidsMealSelect: handleKidsMealSelect,
+    };
+
+    // Trigger - always shown
+    if (shouldShowNode("trigger")) {
+      nodes.push({
         id: "trigger",
         type: "orderNode",
-        position: { x: 0, y: nodePositions.trigger },
-          data: {
-            type: "trigger",
-            order,
-            onMealTypeSelect: handleMealTypeSelect,
-            onSpritzSelect: handleSpritzSelect,
-            onBaseSelect: handleBaseSelect,
-            onVeggieToggle: handleVeggieToggle,
-            onProteinToggle: handleProteinToggle,
-            onKidsMealSelect: handleKidsMealSelect,
-          },
-        },
-        {
-          id: "condition",
-          type: "orderNode",
-          position: { x: 0, y: nodePositions.condition },
-          data: {
-            type: "condition",
-            order,
-            onMealTypeSelect: handleMealTypeSelect,
-            onSpritzSelect: handleSpritzSelect,
-            onBaseSelect: handleBaseSelect,
-            onVeggieToggle: handleVeggieToggle,
-            onProteinToggle: handleProteinToggle,
-            onKidsMealSelect: handleKidsMealSelect,
-          },
-        },
-    ];
-
-    if (order.mealType === "grown-ups") {
-      nodes.push(
-        {
-          id: "spritz",
-          type: "orderNode",
-          position: { x: 0, y: nodePositions.spritz },
-          data: {
-            type: "spritz",
-            order,
-            onMealTypeSelect: handleMealTypeSelect,
-            onSpritzSelect: handleSpritzSelect,
-            onBaseSelect: handleBaseSelect,
-            onVeggieToggle: handleVeggieToggle,
-            onProteinToggle: handleProteinToggle,
-            onKidsMealSelect: handleKidsMealSelect,
-          },
-        },
-        {
-          id: "base",
-          type: "orderNode",
-          position: { x: 0, y: nodePositions.base },
-          data: {
-            type: "base",
-            order,
-            onMealTypeSelect: handleMealTypeSelect,
-            onSpritzSelect: handleSpritzSelect,
-            onBaseSelect: handleBaseSelect,
-            onVeggieToggle: handleVeggieToggle,
-            onProteinToggle: handleProteinToggle,
-            onKidsMealSelect: handleKidsMealSelect,
-          },
-        },
-        {
-          id: "veggies",
-          type: "orderNode",
-          position: { x: 0, y: nodePositions.veggies },
-          data: {
-            type: "veggies",
-            order,
-            onMealTypeSelect: handleMealTypeSelect,
-            onSpritzSelect: handleSpritzSelect,
-            onBaseSelect: handleBaseSelect,
-            onVeggieToggle: handleVeggieToggle,
-            onProteinToggle: handleProteinToggle,
-            onKidsMealSelect: handleKidsMealSelect,
-          },
-        },
-        {
-          id: "proteins",
-          type: "orderNode",
-          position: { x: 0, y: nodePositions.proteins },
-          data: {
-            type: "proteins",
-            order,
-            onMealTypeSelect: handleMealTypeSelect,
-            onSpritzSelect: handleSpritzSelect,
-            onBaseSelect: handleBaseSelect,
-            onVeggieToggle: handleVeggieToggle,
-            onProteinToggle: handleProteinToggle,
-            onKidsMealSelect: handleKidsMealSelect,
-          },
-        }
-      );
-    } else if (order.mealType === "kids") {
-      nodes.push({
-        id: "kids",
-        type: "orderNode",
-        position: { x: 0, y: nodePositions.kids },
+        position: { x: 0, y: nodePositions.trigger ?? 0 },
         data: {
-          type: "kids",
-          order,
-          onMealTypeSelect: handleMealTypeSelect,
-          onBaseSelect: handleBaseSelect,
-          onVeggieToggle: handleVeggieToggle,
-          onProteinToggle: handleProteinToggle,
-          onKidsMealSelect: handleKidsMealSelect,
+          type: "trigger",
+          ...baseNodeData,
         },
       });
     }
 
+    // Condition - always shown (trigger is always completed)
+    if (shouldShowNode("condition")) {
+      nodes.push({
+        id: "condition",
+        type: "orderNode",
+        position: { x: 0, y: nodePositions.condition ?? 0 },
+        data: {
+          type: "condition",
+          ...baseNodeData,
+        },
+      });
+    }
+
+    // Grown-ups path
+    if (order.mealType === "grown-ups") {
+      if (shouldShowNode("spritz")) {
+        nodes.push({
+          id: "spritz",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.spritz ?? 0 },
+          data: {
+            type: "spritz",
+            ...baseNodeData,
+          },
+        });
+      }
+
+      if (shouldShowNode("base")) {
+        nodes.push({
+          id: "base",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.base ?? 0 },
+          data: {
+            type: "base",
+            ...baseNodeData,
+          },
+        });
+      }
+
+      if (shouldShowNode("veggies")) {
+        nodes.push({
+          id: "veggies",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.veggies ?? 0 },
+          data: {
+            type: "veggies",
+            ...baseNodeData,
+          },
+        });
+      }
+
+      if (shouldShowNode("proteins")) {
+        nodes.push({
+          id: "proteins",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.proteins ?? 0 },
+          data: {
+            type: "proteins",
+            ...baseNodeData,
+          },
+        });
+      }
+
+      if (shouldShowNode("submit")) {
+        nodes.push({
+          id: "submit",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.submit ?? 0 },
+          data: {
+            type: "submit",
+            order,
+            canOrder: !!order.spritz && !!order.base && order.veggies.length > 0 && order.proteins.length > 0,
+            onSubmitOrder: handleOrder,
+          },
+        });
+      }
+    } 
+    // Kids path
+    else if (order.mealType === "kids") {
+      if (shouldShowNode("kids")) {
+        nodes.push({
+          id: "kids",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.kids ?? 0 },
+          data: {
+            type: "kids",
+            ...baseNodeData,
+          },
+        });
+      }
+
+      if (shouldShowNode("submit")) {
+        nodes.push({
+          id: "submit",
+          type: "orderNode",
+          position: { x: 0, y: nodePositions.submit ?? 0 },
+          data: {
+            type: "submit",
+            order,
+            canOrder: true,
+            onSubmitOrder: handleOrder,
+          },
+        });
+      }
+    }
+
     return nodes;
-  }, [order, handleMealTypeSelect, handleSpritzSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, nodePositions]);
+  }, [order, handleMealTypeSelect, handleSpritzSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, handleOrder, nodePositions, shouldShowNode]);
 
   const initialEdges: Edge[] = useMemo(() => {
-    const edges: Edge[] = [
-      { id: "e-trigger-condition", source: "trigger", target: "condition", type: "smoothstep" },
-    ];
+    const edges: Edge[] = [];
+
+    // Only create edges between nodes that exist
+    if (shouldShowNode("trigger") && shouldShowNode("condition")) {
+      edges.push({ id: "e-trigger-condition", source: "trigger", target: "condition", type: "smoothstep" });
+    }
 
     if (order.mealType === "grown-ups") {
-      edges.push(
-        { id: "e-condition-spritz", source: "condition", target: "spritz", type: "smoothstep" },
-        { id: "e-spritz-base", source: "spritz", target: "base", type: "smoothstep" },
-        { id: "e-base-veggies", source: "base", target: "veggies", type: "smoothstep" },
-        { id: "e-veggies-proteins", source: "veggies", target: "proteins", type: "smoothstep" }
-      );
+      if (shouldShowNode("condition") && shouldShowNode("spritz")) {
+        edges.push({ id: "e-condition-spritz", source: "condition", target: "spritz", type: "smoothstep" });
+      }
+      if (shouldShowNode("spritz") && shouldShowNode("base")) {
+        edges.push({ id: "e-spritz-base", source: "spritz", target: "base", type: "smoothstep" });
+      }
+      if (shouldShowNode("base") && shouldShowNode("veggies")) {
+        edges.push({ id: "e-base-veggies", source: "base", target: "veggies", type: "smoothstep" });
+      }
+      if (shouldShowNode("veggies") && shouldShowNode("proteins")) {
+        edges.push({ id: "e-veggies-proteins", source: "veggies", target: "proteins", type: "smoothstep" });
+      }
+      if (shouldShowNode("proteins") && shouldShowNode("submit")) {
+        edges.push({ id: "e-proteins-submit", source: "proteins", target: "submit", type: "smoothstep" });
+      }
     } else if (order.mealType === "kids") {
-      edges.push({ id: "e-condition-kids", source: "condition", target: "kids", type: "smoothstep" });
+      if (shouldShowNode("condition") && shouldShowNode("kids")) {
+        edges.push({ id: "e-condition-kids", source: "condition", target: "kids", type: "smoothstep" });
+      }
+      if (shouldShowNode("kids") && shouldShowNode("submit")) {
+        edges.push({ id: "e-kids-submit", source: "kids", target: "submit", type: "smoothstep" });
+      }
     }
 
     return edges;
-  }, [order]);
+  }, [order, shouldShowNode]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -733,163 +759,203 @@ export default function OrderFlow() {
     [onNodesChange]
   );
 
-  // Update nodes when order changes
+  // Update nodes when order changes - rebuild nodes array based on conditional logic
   React.useEffect(() => {
-    // Use default positions for initial calculation
-    const defaultNodes: Node<OrderNodeData>[] = [];
-    const positions = calculateNodePositions(defaultNodes);
-    setNodes((nds: Node<OrderNodeData>[]) => {
-      const nodeMap = new Map(nds.map((n) => [n.id, n]));
-      const newNodes: Node<OrderNodeData>[] = [];
+    const positions = calculateNodePositions();
+    const baseNodeData = {
+      order,
+      onMealTypeSelect: handleMealTypeSelect,
+      onSpritzSelect: handleSpritzSelect,
+      onBaseSelect: handleBaseSelect,
+      onVeggieToggle: handleVeggieToggle,
+      onProteinToggle: handleProteinToggle,
+      onKidsMealSelect: handleKidsMealSelect,
+    };
 
-      // Always include trigger and condition
-      if (nodeMap.has("trigger")) {
+    const newNodes: Node<OrderNodeData>[] = [];
+
+    // Trigger - always shown
+    if (shouldShowNode("trigger")) {
+      newNodes.push({
+        id: "trigger",
+        type: "orderNode",
+        position: { x: 0, y: positions.trigger ?? 0 },
+        data: {
+          type: "trigger",
+          ...baseNodeData,
+        },
+      });
+    }
+
+    // Condition - always shown
+    if (shouldShowNode("condition")) {
+      newNodes.push({
+        id: "condition",
+        type: "orderNode",
+        position: { x: 0, y: positions.condition ?? 0 },
+        data: {
+          type: "condition",
+          ...baseNodeData,
+        },
+      });
+    }
+
+    // Grown-ups path
+    if (order.mealType === "grown-ups") {
+      if (shouldShowNode("spritz")) {
         newNodes.push({
-          ...nodeMap.get("trigger")!,
-          position: { x: 0, y: positions.trigger },
-          data: { ...nodeMap.get("trigger")!.data, order },
+          id: "spritz",
+          type: "orderNode",
+          position: { x: 0, y: positions.spritz ?? 0 },
+          data: {
+            type: "spritz",
+            ...baseNodeData,
+          },
         });
       }
-      if (nodeMap.has("condition")) {
+
+      if (shouldShowNode("base")) {
         newNodes.push({
-          ...nodeMap.get("condition")!,
-          position: { x: 0, y: positions.condition },
-          data: { ...nodeMap.get("condition")!.data, order },
+          id: "base",
+          type: "orderNode",
+          position: { x: 0, y: positions.base ?? 0 },
+          data: {
+            type: "base",
+            ...baseNodeData,
+          },
         });
       }
 
-      // Add grown-ups nodes
-      if (order.mealType === "grown-ups") {
-        ["spritz", "base", "veggies", "proteins"].forEach((id) => {
-          if (nodeMap.has(id)) {
-            newNodes.push({
-              ...nodeMap.get(id)!,
-              position: { x: 0, y: positions[id as keyof typeof positions] },
-              data: { ...nodeMap.get(id)!.data, order },
-            });
-          } else {
-            // Create new node
-            const nodeData: OrderNodeData = {
-              type: id as "spritz" | "base" | "veggies" | "proteins",
-              order,
-              onMealTypeSelect: handleMealTypeSelect,
-              onSpritzSelect: handleSpritzSelect,
-              onBaseSelect: handleBaseSelect,
-              onVeggieToggle: handleVeggieToggle,
-              onProteinToggle: handleProteinToggle,
-              onKidsMealSelect: handleKidsMealSelect,
-            };
-            newNodes.push({
-              id,
-              type: "orderNode",
-              position: { x: 0, y: positions[id as keyof typeof positions] },
-              data: nodeData,
-            });
-          }
+      if (shouldShowNode("veggies")) {
+        newNodes.push({
+          id: "veggies",
+          type: "orderNode",
+          position: { x: 0, y: positions.veggies ?? 0 },
+          data: {
+            type: "veggies",
+            ...baseNodeData,
+          },
         });
-      } else if (order.mealType === "kids") {
-        if (nodeMap.has("kids")) {
-          newNodes.push({
-            ...nodeMap.get("kids")!,
-            position: { x: 0, y: positions.kids },
-            data: { ...nodeMap.get("kids")!.data, order },
-          });
-        } else {
-          const nodeData: OrderNodeData = {
-            type: "kids",
+      }
+
+      if (shouldShowNode("proteins")) {
+        newNodes.push({
+          id: "proteins",
+          type: "orderNode",
+          position: { x: 0, y: positions.proteins ?? 0 },
+          data: {
+            type: "proteins",
+            ...baseNodeData,
+          },
+        });
+      }
+
+      if (shouldShowNode("submit")) {
+        newNodes.push({
+          id: "submit",
+          type: "orderNode",
+          position: { x: 0, y: positions.submit ?? 0 },
+          data: {
+            type: "submit",
             order,
-            onMealTypeSelect: handleMealTypeSelect,
-            onBaseSelect: handleBaseSelect,
-            onVeggieToggle: handleVeggieToggle,
-            onProteinToggle: handleProteinToggle,
-            onKidsMealSelect: handleKidsMealSelect,
-          };
-          newNodes.push({
-            id: "kids",
-            type: "orderNode",
-            position: { x: 0, y: positions.kids },
-            data: nodeData,
-          });
-        }
+            canOrder: !!order.spritz && !!order.base && order.veggies.length > 0 && order.proteins.length > 0,
+            onSubmitOrder: handleOrder,
+          },
+        });
+      }
+    } 
+    // Kids path
+    else if (order.mealType === "kids") {
+      if (shouldShowNode("kids")) {
+        newNodes.push({
+          id: "kids",
+          type: "orderNode",
+          position: { x: 0, y: positions.kids ?? 0 },
+          data: {
+            type: "kids",
+            ...baseNodeData,
+          },
+        });
       }
 
-      return newNodes;
-    });
-  }, [order, setNodes, calculateNodePositions, handleMealTypeSelect, handleSpritzSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect]);
+      if (shouldShowNode("submit")) {
+        newNodes.push({
+          id: "submit",
+          type: "orderNode",
+          position: { x: 0, y: positions.submit ?? 0 },
+          data: {
+            type: "submit",
+            order,
+            canOrder: true,
+            onSubmitOrder: handleOrder,
+          },
+        });
+      }
+    }
 
-  // Update edges when order changes
+    setNodes(newNodes);
+  }, [order, setNodes, calculateNodePositions, shouldShowNode, handleMealTypeSelect, handleSpritzSelect, handleBaseSelect, handleVeggieToggle, handleProteinToggle, handleKidsMealSelect, handleOrder]);
+
+  // Update edges when order changes - only create edges for nodes that exist
   React.useEffect(() => {
-    const newEdges: Edge[] = [
-      { id: "e-trigger-condition", source: "trigger", target: "condition", type: "smoothstep" },
-    ];
+    const newEdges: Edge[] = [];
+
+    // Only create edges between nodes that exist
+    if (shouldShowNode("trigger") && shouldShowNode("condition")) {
+      newEdges.push({ id: "e-trigger-condition", source: "trigger", target: "condition", type: "smoothstep" });
+    }
 
     if (order.mealType === "grown-ups") {
-      newEdges.push(
-        { id: "e-condition-spritz", source: "condition", target: "spritz", type: "smoothstep" },
-        { id: "e-spritz-base", source: "spritz", target: "base", type: "smoothstep" },
-        { id: "e-base-veggies", source: "base", target: "veggies", type: "smoothstep" },
-        { id: "e-veggies-proteins", source: "veggies", target: "proteins", type: "smoothstep" }
-      );
+      if (shouldShowNode("condition") && shouldShowNode("spritz")) {
+        newEdges.push({ id: "e-condition-spritz", source: "condition", target: "spritz", type: "smoothstep" });
+      }
+      if (shouldShowNode("spritz") && shouldShowNode("base")) {
+        newEdges.push({ id: "e-spritz-base", source: "spritz", target: "base", type: "smoothstep" });
+      }
+      if (shouldShowNode("base") && shouldShowNode("veggies")) {
+        newEdges.push({ id: "e-base-veggies", source: "base", target: "veggies", type: "smoothstep" });
+      }
+      if (shouldShowNode("veggies") && shouldShowNode("proteins")) {
+        newEdges.push({ id: "e-veggies-proteins", source: "veggies", target: "proteins", type: "smoothstep" });
+      }
+      if (shouldShowNode("proteins") && shouldShowNode("submit")) {
+        newEdges.push({ id: "e-proteins-submit", source: "proteins", target: "submit", type: "smoothstep" });
+      }
     } else if (order.mealType === "kids") {
-      newEdges.push({ id: "e-condition-kids", source: "condition", target: "kids", type: "smoothstep" });
+      if (shouldShowNode("condition") && shouldShowNode("kids")) {
+        newEdges.push({ id: "e-condition-kids", source: "condition", target: "kids", type: "smoothstep" });
+      }
+      if (shouldShowNode("kids") && shouldShowNode("submit")) {
+        newEdges.push({ id: "e-kids-submit", source: "kids", target: "submit", type: "smoothstep" });
+      }
     }
 
     setEdges(newEdges);
-  }, [order, setEdges]);
-
-  const handleOrder = () => {
-    const orderData = JSON.stringify(order);
-    sessionStorage.setItem("order", orderData);
-    router.push("/order/confirmation");
-  };
-
-  const canOrder =
-    order.mealType === "grown-ups"
-      ? !!order.spritz && !!order.base && order.veggies.length > 0 && order.proteins.length > 0
-      : order.mealType === "kids" && !!order.kidsMeal;
+  }, [order, shouldShowNode, setEdges]);
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="h-screen flex flex-col">
-        <div className="flex-shrink-0 px-8 pt-8 pb-4">
-          <h1 className="text-4xl font-bold text-[#1a1a1a] text-center mb-4">
-            Create your order
-          </h1>
-        </div>
-        <div className="flex-1 relative">
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={handleNodesChange}
-            onEdgesChange={onEdgesChange}
-            nodeTypes={nodeTypes}
-            nodesDraggable={false}
-            nodesConnectable={false}
-            panOnDrag={true}
-            zoomOnScroll={true}
-            zoomOnPinch={true}
-            fitView
-            className="!bg-neutral-50"
-          >
-            <Background
-              className="!bg-neutral-50"
-              variant={BackgroundVariant.Dots}
-              gap={12}
-              size={1}
-            />
-            <NodePositionUpdater
-              order={order}
-              calculateNodePositions={calculateNodePositions}
-              setNodes={setNodes}
-            />
-          </ReactFlow>
-        </div>
-        <div className="flex-shrink-0 flex justify-center px-8 pb-8 pt-4">
-          <Button variant="primary" onClick={handleOrder} disabled={!canOrder}>
-            Order
-          </Button>
-        </div>
-      </div>
+    <div className="h-screen w-screen">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={handleNodesChange}
+        onEdgesChange={onEdgesChange}
+        nodeTypes={nodeTypes}
+        nodesDraggable={false}
+        nodesConnectable={false}
+        panOnDrag={true}
+        zoomOnScroll={true}
+        zoomOnPinch={true}
+        fitView
+        className="!bg-neutral-50"
+      >
+        <Background
+          className="!bg-neutral-50"
+          variant={BackgroundVariant.Dots}
+          gap={12}
+          size={1}
+        />
+      </ReactFlow>
     </div>
   );
 }

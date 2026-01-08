@@ -42,18 +42,13 @@ export const spritzes: SpritzOption[] = [
 export const risottoBases: RisottoBase[] = [
   {
     id: "vegan",
-    name: "Vegan",
-    description: "Vegan risotto base",
+    name: "Vegan - without cheese",
+    description: "Plant-based risotto without cheese",
   },
   {
-    id: "veggie",
-    name: "Veggie",
-    description: "Vegetarian risotto base",
-  },
-  {
-    id: "vlees",
-    name: "Meat (bouillon)",
-    description: "Meat-based risotto bouillon",
+    id: "normal",
+    name: "Classic - with parmesan cheese",
+    description: "Classic risotto with parmesan cheese",
   },
 ];
 
@@ -72,6 +67,11 @@ export const veggies: Veggie[] = [
     id: "prei",
     name: "Leek",
     description: "Leek",
+  },
+  {
+    id: "no-veggies",
+    name: "No veggies",
+    description: "No vegetables",
   },
 ];
 
@@ -95,6 +95,11 @@ export const proteins: Protein[] = [
     id: "guanciale",
     name: "Guanciale",
     description: "Guanciale",
+  },
+  {
+    id: "no-protein",
+    name: "No protein",
+    description: "No protein topping",
   },
 ];
 
