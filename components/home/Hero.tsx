@@ -1,56 +1,60 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
+import Button from "@/components/Button";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-20 pb-32 bg-[#0a1628] overflow-hidden">
-      {/* Background decoration - subtle gradient circles */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#3366ff]/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#3366ff]/5 rounded-full blur-3xl" />
+    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-24 pb-32 bg-gradient-to-br from-[#FFEB3B] via-[#FFC107] to-[#FFB300] overflow-hidden summer-dot-pattern">
+      {/* Summer gradient overlay */}
+      <div className="absolute inset-0 summer-gradient-overlay" />
       
-      <div className="relative z-10 max-w-lg mx-auto text-center fade-in-up">
+      {/* Background decoration - bright summer circles */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/20 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#FF9800]/20 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl" />
+      
+      <div className="relative z-10 max-w-4xl mx-auto text-center fade-in-up">
         {/* Title */}
-        <h1 className="font-serif text-5xl md:text-7xl font-bold text-white mb-2 leading-tight tracking-tight">
+        <h1 className="text-6xl md:text-8xl font-bold text-[#1a1a1a] mb-3 leading-tight tracking-tight">
           Risottomation
         </h1>
-        <h2 className="font-serif text-3xl md:text-4xl font-medium text-white/90 mb-6">
+        <h2 className="text-4xl md:text-5xl font-semibold text-[#1a1a1a] mb-8">
           Risotto Bowl
         </h2>
         
         {/* Slogan */}
-        <p className="text-lg md:text-xl text-white/70 mb-10 italic">
+        <p className="text-2xl md:text-3xl font-medium text-[#1a1a1a] mb-12">
           Fast food, but good.
         </p>
         
-        {/* Risotto bowl image placeholder */}
-        <div className="relative mx-auto mb-12 float">
-          <div className="w-64 h-64 md:w-80 md:h-80 mx-auto rounded-full bg-gradient-to-br from-[#f5f3ef] to-[#ebe8e2] shadow-2xl flex items-center justify-center overflow-hidden border-4 border-white/20">
-            <div className="text-center p-6">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                viewBox="0 0 100 100" 
-                className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-3 text-[#0a1628]/30"
-                fill="currentColor"
-              >
-                <ellipse cx="50" cy="55" rx="40" ry="25" />
-                <ellipse cx="50" cy="50" rx="40" ry="25" fill="none" stroke="currentColor" strokeWidth="3" />
-                <path d="M20 45 Q50 35 80 45" fill="none" stroke="currentColor" strokeWidth="2" />
-                <circle cx="35" cy="48" r="4" />
-                <circle cx="50" cy="45" r="5" />
-                <circle cx="65" cy="48" r="4" />
-                <circle cx="42" cy="55" r="3" />
-                <circle cx="58" cy="55" r="3" />
-              </svg>
-              <span className="text-sm text-[#0a1628]/50 font-medium">
-                Risotto Bowl
-              </span>
-            </div>
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+          <Button href="/order" variant="coral" className="text-lg px-8 py-4 bg-white text-[#1a1a1a] hover:bg-[#f5f5f5] border-0 shadow-lg">
+            Order online
+          </Button>
+          <Button href="#favorites" variant="outline" className="text-lg px-8 py-4 bg-transparent text-[#1a1a1a] border-2 border-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white">
+            Or check our menu
+          </Button>
+        </div>
+        
+        {/* Risotto bowl image */}
+        <div className="relative mx-auto float">
+          <div className="relative w-80 h-80 md:w-96 md:h-96 mx-auto">
+            <Image
+              src="/risotto-bowl-2.png"
+              alt="Delicious risotto bowl with pumpkin, mushrooms, chorizo, and seeds"
+              fill
+              className="object-contain drop-shadow-2xl"
+              priority
+              sizes="(max-width: 768px) 320px, 384px"
+            />
           </div>
           
           {/* Decorative elements around bowl */}
-          <div className="absolute -top-4 -right-4 w-12 h-12 bg-[#ff6b4a]/20 rounded-full blur-sm" />
-          <div className="absolute -bottom-2 -left-6 w-16 h-16 bg-[#3366ff]/20 rounded-full blur-sm" />
+          <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/40 rounded-full blur-sm" />
+          <div className="absolute -bottom-2 -left-6 w-20 h-20 bg-white/30 rounded-full blur-sm" />
         </div>
       </div>
       

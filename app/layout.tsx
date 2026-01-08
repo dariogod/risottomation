@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
-import { DM_Sans, Playfair_Display } from "next/font/google";
+import { Poppins } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -22,10 +16,13 @@ export const metadata: Metadata = {
 
 function Header() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a1628]/95 backdrop-blur-sm">
-      <div className="flex items-center justify-between px-4 py-3 max-w-7xl mx-auto">
-        <Link href="/" className="text-white font-serif text-xl font-semibold tracking-tight">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-yellow-200">
+      <div className="flex items-center justify-between px-4 py-4 max-w-7xl mx-auto">
+        <Link href="/" className="text-[#1a1a1a] text-2xl font-bold tracking-tight">
           Risottomation
+        </Link>
+        <Link href="/order" className="bg-[#FFC107] hover:bg-[#FFB300] text-[#1a1a1a] px-6 py-2 rounded-full font-semibold transition-colors">
+          Order online
         </Link>
       </div>
     </header>
@@ -40,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${dmSans.variable} ${playfair.variable} antialiased`}
+        className={`${poppins.variable} antialiased`}
       >
         <Header />
         {children}
