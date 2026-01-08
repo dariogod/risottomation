@@ -25,7 +25,7 @@ export default function Hero() {
         </p>
         
         {/* Risotto bowl image */}
-        <div className="relative w-full float -mx-4 md:mx-auto md:w-auto -mt-20 md:-mt-40 z-0">
+        <div className="relative w-full float -mx-4 md:mx-auto md:w-auto -mt-16 md:-mt-36 z-0">
           <div className="relative w-full aspect-square md:w-[650px] md:h-[650px] lg:w-[750px] lg:h-[750px] md:mx-auto">
             <Image
               src="/risotto-bowl-2.png"
